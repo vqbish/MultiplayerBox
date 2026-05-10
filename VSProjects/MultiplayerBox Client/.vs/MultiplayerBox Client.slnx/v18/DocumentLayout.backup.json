@@ -1,13 +1,13 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\vabish\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\MultiplayerBox Client\\",
+  "WorkspaceRootPath": "C:\\Users\\kakao\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\MultiplayerBox Client\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{873D537C-7251-C207-B028-72E9E1900B54}|MultiplayerBox Client.csproj|c:\\users\\vabish\\appdata\\locallow\\f2games\\gorebox\\mods\\multiplayerbox\\vsprojects\\multiplayerbox client\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{873D537C-7251-C207-B028-72E9E1900B54}|MultiplayerBox Client.csproj|c:\\users\\kakao\\appdata\\locallow\\f2games\\gorebox\\mods\\multiplayerbox\\vsprojects\\multiplayerbox client\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{873D537C-7251-C207-B028-72E9E1900B54}|MultiplayerBox Client.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{873D537C-7251-C207-B028-72E9E1900B54}|MultiplayerBox Client.csproj|c:\\users\\vabish\\appdata\\locallow\\f2games\\gorebox\\mods\\multiplayerbox\\vsprojects\\multiplayerbox client\\network.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{873D537C-7251-C207-B028-72E9E1900B54}|MultiplayerBox Client.csproj|c:\\users\\kakao\\appdata\\locallow\\f2games\\gorebox\\mods\\multiplayerbox\\vsprojects\\multiplayerbox client\\network.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{873D537C-7251-C207-B028-72E9E1900B54}|MultiplayerBox Client.csproj|solutionrelative:network.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -18,19 +18,15 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 1,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
-            },
             {
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "Network.cs",
-              "DocumentMoniker": "C:\\Users\\vabish\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\MultiplayerBox Client\\Network.cs",
+              "DocumentMoniker": "C:\\Users\\kakao\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\MultiplayerBox Client\\Network.cs",
               "RelativeDocumentMoniker": "Network.cs",
-              "ToolTip": "C:\\Users\\vabish\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\MultiplayerBox Client\\Network.cs",
+              "ToolTip": "C:\\Users\\kakao\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\MultiplayerBox Client\\Network.cs",
               "RelativeToolTip": "Network.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -40,11 +36,11 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\vabish\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\MultiplayerBox Client\\Program.cs",
+              "DocumentMoniker": "C:\\Users\\kakao\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\MultiplayerBox Client\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\vabish\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\MultiplayerBox Client\\Program.cs",
+              "ToolTip": "C:\\Users\\kakao\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\MultiplayerBox Client\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAABQAAABhAAAAAAAAAA==",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-10T13:33:46.502Z",
               "EditorCaption": ""
