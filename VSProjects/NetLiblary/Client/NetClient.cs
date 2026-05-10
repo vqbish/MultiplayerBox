@@ -1,152 +1,297 @@
-﻿using System;
-using System.IO;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using NetBackend.Shared;
 
-namespace NetBackend.Client
+namespace NetBackend.Client;
+
+public sealed class NetClient : IDisposable
 {
-    public sealed class NetClient
+    private readonly SemaphoreSlim _sendLock = new(1, 1);
+
+    private TcpClient? _client;
+    private NetworkStream? _stream;
+    private CancellationTokenSource? _cts;
+    private bool _disconnectRaised;
+    private TaskCompletionSource<string[]>? _roomsRequest;
+    private TaskCompletionSource<string>? _roomJoinRequest;
+
+    public string? CurrentRoomId { get; private set; }
+    public string ClientId { get; private set; } = $"Client_{Guid.NewGuid():N}"[..11];
+    public bool IsConnected => _client?.Connected == true && _stream != null;
+
+    public event Action? OnConnected;
+    public event Action? OnDisconnected;
+    public event Action<string, string>? OnMessageReceived;
+    public event Action<string>? OnError;
+
+    public async Task ConnectAsync(string host, int port, CancellationToken ct = default)
     {
-        private TcpClient? _client;
-        private CancellationTokenSource? _cts;
-
-        public string? CurrentRoomId { get; private set; }
-        public string ClientId { get; private set; } = "Client_" + Guid.NewGuid().ToString()[..4];
-        public bool IsConnected => _client?.Connected ?? false;
-
-        // События
-        public event Action? OnConnected;
-        public event Action? OnDisconnected;
-        public event Action<string, string>? OnMessageReceived; // ClientId, Payload
-        public event Action<string>? OnError;
-
-        // TCS для асинхронного ожидания ответов от сервера
-        private TaskCompletionSource<string[]>? _tcsRoomList;
-        private TaskCompletionSource<string>? _tcsRoomJoined;
-
-        public async Task ConnectAsync(string host, int port, CancellationToken ct = default)
+        if (IsConnected)
         {
-            _client = new TcpClient();
-            await _client.ConnectAsync(host, port, ct);
-
-            _cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
-            _ = Task.Run(() => ReceiveLoopAsync(_cts.Token), _cts.Token);
-
-            OnConnected?.Invoke();
+            await DisconnectAsync();
         }
 
-        public void SetClientId(string id) => ClientId = id;
-
-        /// <summary>
-        /// Запрашивает у сервера список всех активных комнат.
-        /// </summary>
-        public async Task<string[]> GetRoomsAsync(CancellationToken ct = default)
+        _client = new TcpClient
         {
-            EnsureConnected();
-            _tcsRoomList = new TaskCompletionSource<string[]>();
+            NoDelay = true
+        };
 
-            await SendRawAsync(new NetworkPacket { Type = PacketType.RequestRooms }, ct);
+        await _client.ConnectAsync(host, port, ct);
 
-            // Ждем ответа от ReceiveLoopAsync
-            return await _tcsRoomList.Task.WaitAsync(TimeSpan.FromSeconds(5), ct);
+        _stream = _client.GetStream();
+        _cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        _disconnectRaised = false;
+
+        _ = Task.Run(() => ReceiveLoopAsync(_cts.Token), CancellationToken.None);
+        OnConnected?.Invoke();
+    }
+
+    public void SetClientId(string id)
+    {
+        if (!string.IsNullOrWhiteSpace(id))
+        {
+            ClientId = id.Trim();
         }
+    }
 
-        public async Task<string> CreateRoomAsync(CancellationToken ct = default)
+    public async Task<string[]> GetRoomsAsync(CancellationToken ct = default)
+    {
+        EnsureConnected();
+
+        var request = CreateRoomsRequest();
+        await SendRawAsync(new NetworkPacket { Type = PacketType.RequestRooms }, ct);
+
+        try
         {
-            EnsureConnected();
-            _tcsRoomJoined = new TaskCompletionSource<string>();
-
-            await SendRawAsync(new NetworkPacket { Type = PacketType.CreateRoom, ClientId = ClientId }, ct);
-            return await _tcsRoomJoined.Task.WaitAsync(TimeSpan.FromSeconds(5), ct);
+            return await request.Task.WaitAsync(TimeSpan.FromSeconds(5), ct);
         }
-
-        public async Task JoinRoomAsync(string roomId, CancellationToken ct = default)
+        finally
         {
-            EnsureConnected();
-            _tcsRoomJoined = new TaskCompletionSource<string>();
-
-            await SendRawAsync(new NetworkPacket { Type = PacketType.JoinRoom, ClientId = ClientId, RoomId = roomId }, ct);
-            await _tcsRoomJoined.Task.WaitAsync(TimeSpan.FromSeconds(5), ct);
-        }
-
-        public async Task SendPayloadAsync(string payload, CancellationToken ct = default)
-        {
-            EnsureConnected();
-            await SendRawAsync(new NetworkPacket
+            if (ReferenceEquals(_roomsRequest, request))
             {
-                Type = PacketType.Message,
-                RoomId = CurrentRoomId,
-                ClientId = ClientId,
-                Payload = payload
-            }, ct);
+                _roomsRequest = null;
+            }
         }
+    }
 
-        public async Task DisconnectAsync()
+    public async Task<string> CreateRoomAsync(CancellationToken ct = default)
+    {
+        EnsureConnected();
+
+        var request = CreateRoomRequest();
+        await SendRawAsync(new NetworkPacket { Type = PacketType.CreateRoom, ClientId = ClientId }, ct);
+
+        try
         {
-            if (!IsConnected) return;
-
-            try { await SendRawAsync(new NetworkPacket { Type = PacketType.LeaveRoom, RoomId = CurrentRoomId }, default); } catch { }
-
-            _cts?.Cancel();
-            _client?.Close();
-            CurrentRoomId = null;
-            OnDisconnected?.Invoke();
+            return await request.Task.WaitAsync(TimeSpan.FromSeconds(5), ct);
         }
-
-        private async Task ReceiveLoopAsync(CancellationToken ct)
+        finally
         {
-            try
+            if (ReferenceEquals(_roomJoinRequest, request))
             {
-                using var stream = _client!.GetStream();
-                using var reader = new StreamReader(stream, Encoding.UTF8, false, 1024, true);
+                _roomJoinRequest = null;
+            }
+        }
+    }
 
-                while (!ct.IsCancellationRequested)
+    public async Task JoinRoomAsync(string roomId, CancellationToken ct = default)
+    {
+        EnsureConnected();
+
+        if (string.IsNullOrWhiteSpace(roomId))
+        {
+            throw new ArgumentException("Room id is empty.", nameof(roomId));
+        }
+
+        var request = CreateRoomRequest();
+        await SendRawAsync(new NetworkPacket
+        {
+            Type = PacketType.JoinRoom,
+            ClientId = ClientId,
+            RoomId = roomId.Trim().ToUpperInvariant()
+        }, ct);
+
+        try
+        {
+            await request.Task.WaitAsync(TimeSpan.FromSeconds(5), ct);
+        }
+        finally
+        {
+            if (ReferenceEquals(_roomJoinRequest, request))
+            {
+                _roomJoinRequest = null;
+            }
+        }
+    }
+
+    public async Task SendPayloadAsync(string payload, CancellationToken ct = default)
+    {
+        EnsureConnected();
+
+        if (CurrentRoomId == null)
+        {
+            throw new InvalidOperationException("Client is not in a room.");
+        }
+
+        await SendRawAsync(new NetworkPacket
+        {
+            Type = PacketType.Message,
+            RoomId = CurrentRoomId,
+            ClientId = ClientId,
+            Payload = payload
+        }, ct);
+    }
+
+    public async Task DisconnectAsync()
+    {
+        if (_client == null)
+        {
+            return;
+        }
+
+        try
+        {
+            if (_stream != null && CurrentRoomId != null)
+            {
+                await SendRawAsync(new NetworkPacket
                 {
-                    var packet = await PacketCodec.ReadAsync(reader, ct);
-                    if (packet == null) break;
-
-                    switch (packet.Type)
-                    {
-                        case PacketType.RoomsList:
-                            _tcsRoomList?.TrySetResult(packet.DataList ?? Array.Empty<string>());
-                            break;
-
-                        case PacketType.RoomJoined:
-                            CurrentRoomId = packet.RoomId;
-                            _tcsRoomJoined?.TrySetResult(packet.RoomId!);
-                            break;
-
-                        case PacketType.Message:
-                            if (packet.ClientId != null && packet.Payload != null)
-                                OnMessageReceived?.Invoke(packet.ClientId, packet.Payload);
-                            break;
-
-                        case PacketType.Error:
-                            OnError?.Invoke(packet.Payload ?? "Unknown error");
-                            _tcsRoomJoined?.TrySetException(new Exception(packet.Payload));
-                            break;
-                    }
-                }
-            }
-            catch (Exception ex) when (ex is not OperationCanceledException)
-            {
-                OnError?.Invoke(ex.Message);
-            }
-            finally
-            {
-                OnDisconnected?.Invoke();
+                    Type = PacketType.LeaveRoom,
+                    RoomId = CurrentRoomId,
+                    ClientId = ClientId
+                });
             }
         }
-
-        private Task SendRawAsync(NetworkPacket packet, CancellationToken ct) =>
-            PacketCodec.WriteAsync(_client!.GetStream(), packet, ct);
-
-        private void EnsureConnected()
+        catch
         {
-            if (!IsConnected) throw new InvalidOperationException("Клиент не подключен к серверу.");
         }
+
+        CloseConnection();
+        RaiseDisconnected();
+    }
+
+    public void Dispose()
+    {
+        CloseConnection();
+        _sendLock.Dispose();
+    }
+
+    private async Task ReceiveLoopAsync(CancellationToken ct)
+    {
+        try
+        {
+            using var reader = new StreamReader(_stream!, Encoding.UTF8, false, 4096, true);
+
+            while (!ct.IsCancellationRequested)
+            {
+                var packet = await PacketCodec.ReadAsync(reader, ct);
+
+                if (packet == null)
+                {
+                    break;
+                }
+
+                HandlePacket(packet);
+            }
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            OnError?.Invoke(ex.Message);
+        }
+        finally
+        {
+            CloseConnection();
+            RaiseDisconnected();
+        }
+    }
+
+    private void HandlePacket(NetworkPacket packet)
+    {
+        switch (packet.Type)
+        {
+            case PacketType.RoomsList:
+                _roomsRequest?.TrySetResult(packet.DataList ?? Array.Empty<string>());
+                break;
+
+            case PacketType.RoomJoined:
+                CurrentRoomId = packet.RoomId;
+                _roomJoinRequest?.TrySetResult(packet.RoomId ?? "");
+                break;
+
+            case PacketType.Message:
+                if (!string.IsNullOrEmpty(packet.ClientId) && packet.Payload != null)
+                {
+                    OnMessageReceived?.Invoke(packet.ClientId, packet.Payload);
+                }
+                break;
+
+            case PacketType.Error:
+                var message = packet.Payload ?? "Unknown network error";
+                OnError?.Invoke(message);
+                _roomsRequest?.TrySetException(new InvalidOperationException(message));
+                _roomJoinRequest?.TrySetException(new InvalidOperationException(message));
+                break;
+        }
+    }
+
+    private async Task SendRawAsync(NetworkPacket packet, CancellationToken ct = default)
+    {
+        EnsureConnected();
+
+        await _sendLock.WaitAsync(ct);
+
+        try
+        {
+            await PacketCodec.WriteAsync(_stream!, packet, ct);
+        }
+        finally
+        {
+            _sendLock.Release();
+        }
+    }
+
+    private TaskCompletionSource<string[]> CreateRoomsRequest()
+    {
+        _roomsRequest = new TaskCompletionSource<string[]>(TaskCreationOptions.RunContinuationsAsynchronously);
+        return _roomsRequest;
+    }
+
+    private TaskCompletionSource<string> CreateRoomRequest()
+    {
+        _roomJoinRequest = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
+        return _roomJoinRequest;
+    }
+
+    private void EnsureConnected()
+    {
+        if (!IsConnected)
+        {
+            throw new InvalidOperationException("Client is not connected to server.");
+        }
+    }
+
+    private void CloseConnection()
+    {
+        _cts?.Cancel();
+        _cts?.Dispose();
+        _cts = null;
+
+        _stream?.Dispose();
+        _stream = null;
+
+        _client?.Close();
+        _client = null;
+
+        CurrentRoomId = null;
+    }
+
+    private void RaiseDisconnected()
+    {
+        if (_disconnectRaised)
+        {
+            return;
+        }
+
+        _disconnectRaised = true;
+        OnDisconnected?.Invoke();
     }
 }

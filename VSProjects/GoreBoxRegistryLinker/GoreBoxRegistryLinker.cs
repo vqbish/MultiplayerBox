@@ -1,133 +1,227 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Runtime.Versioning;
 using Microsoft.Win32;
 
-namespace GoreBoxRegistryLinker
+[assembly: SupportedOSPlatform("windows")]
+
+namespace GoreBoxRegistryLinker;
+
+public sealed class RegistryMonitor : IDisposable
 {
-    public class RegistryMonitor : IDisposable
+    private const string SubKeyPath = @"Software\F2Games\GoreBox";
+    private const string ValuePrefix = "ModPrefsMultiplayerBoxHandshake";
+
+    private static readonly JsonSerializerOptions JsonOptions = new()
     {
-        private const string SubKeyPath = @"Software\F2Games\GoreBox";
-        private const string ValuePrefix = "ModPrefsMultiplayerBoxHandshake";
+        WriteIndented = false
+    };
 
-        private string _realValueName;
-        private string _lastValue;
-        private bool _isRunning;
-        private Thread _workerThread;
+    private readonly TimeSpan _lookupInterval = TimeSpan.FromSeconds(2);
+    private readonly TimeSpan _pollInterval = TimeSpan.FromMilliseconds(50);
 
-        // Событие, на которое будет подписываться основной код
-        public event Action<string> OnMessageReceived;
-        public event Action<string> OnLog;
+    private string? _valueName;
+    private string _lastValue = "";
+    private volatile bool _isRunning;
+    private Thread? _workerThread;
 
-        public RegistryMonitor() { }
+    public event Action<string>? OnMessageReceived;
+    public event Action<string>? OnLog;
 
-        public void Start()
+    public void Start()
+    {
+        if (_isRunning)
         {
-            if (_isRunning) return;
-            _isRunning = true;
-
-            _workerThread = new Thread(PollingLoop) { IsBackground = true };
-            _workerThread.Start();
+            return;
         }
 
-        public void Stop()
+        _isRunning = true;
+        _workerThread = new Thread(PollingLoop)
         {
-            _isRunning = false;
-            _workerThread?.Join();
+            IsBackground = true,
+            Name = "GoreBoxRegistryMonitor"
+        };
+        _workerThread.Start();
+    }
+
+    public void Stop()
+    {
+        if (!_isRunning)
+        {
+            return;
         }
 
-        private void PollingLoop()
-        {
-            OnLog?.Invoke("[SERVICE] Ожидание инициализации ключа...");
+        _isRunning = false;
 
-            while (_isRunning && _realValueName == null)
+        if (_workerThread is { IsAlive: true } && Thread.CurrentThread != _workerThread)
+        {
+            _workerThread.Join();
+        }
+    }
+
+    public void SendData(IReadOnlyDictionary<string, string> data)
+    {
+        var dataObject = new JsonObject();
+
+        foreach (var item in data)
+        {
+            dataObject[item.Key] = item.Value;
+        }
+
+        var payload = new JsonObject
+        {
+            ["Type"] = "POST",
+            ["Time"] = GetUnixTimeMs(),
+            ["data"] = dataObject,
+            ["from"] = "CLIENT"
+        };
+
+        WritePayload(payload.ToJsonString(JsonOptions));
+    }
+
+    public void SendPayload(string payload, string? senderId = null)
+    {
+        try
+        {
+            if (JsonNode.Parse(payload) is not JsonObject root)
             {
-                _realValueName = FindFullValueName(SubKeyPath, ValuePrefix);
-                if (_realValueName == null) Thread.Sleep(2000);
+                OnLog?.Invoke("[REGISTRY] Invalid packet");
+                return;
             }
 
-            if (_realValueName != null)
-                OnLog?.Invoke($"[FOUND] Мониторинг запущен на ключе: {_realValueName}");
+            root["Time"] = GetUnixTimeMs();
+            root["from"] = "CLIENT";
 
-            _lastValue = GetRegistryString(SubKeyPath, _realValueName);
+            if (!string.IsNullOrWhiteSpace(senderId) && root["data"] is JsonObject data)
+            {
+                data["Sender"] = senderId;
+            }
+
+            WritePayload(root.ToJsonString(JsonOptions));
+        }
+        catch (Exception ex)
+        {
+            OnLog?.Invoke($"[REGISTRY] Packet write err: {ex.Message}");
+        }
+    }
+
+    public void Dispose()
+    {
+        Stop();
+    }
+
+    private void PollingLoop()
+    {
+        try
+        {
+            OnLog?.Invoke("[REGISTRY] Waiting for GoreBox PlayerPrefs key");
+            WaitForValueName();
+
+            if (_valueName == null)
+            {
+                return;
+            }
+
+            OnLog?.Invoke($"[REGISTRY] Monitoring {_valueName}");
+            _lastValue = ReadRegistryValue(_valueName);
 
             while (_isRunning)
             {
-                string currentValue = GetRegistryString(SubKeyPath, _realValueName);
+                var currentValue = ReadRegistryValue(_valueName);
 
                 if (currentValue != _lastValue)
                 {
-                    if (!currentValue.Contains("\"from\":\"CLIENT\""))
+                    _lastValue = currentValue;
+
+                    if (!string.IsNullOrWhiteSpace(currentValue) && !IsClientMessage(currentValue))
                     {
                         OnMessageReceived?.Invoke(currentValue);
                     }
-                    _lastValue = currentValue;
                 }
 
-                Thread.Sleep(100);
+                Thread.Sleep(_pollInterval);
             }
         }
-
-        public void SendData(Dictionary<string, string> data)
+        catch (Exception ex)
         {
-            if (_realValueName == null) return;
-
-            try
-            {
-                string dataContent = string.Join(",", data.Select(x => $"\"{x.Key}\":\"{x.Value}\""));
-                string timeMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
-
-                string fullJson = "{" +
-                    $"\"Type\":\"POST\"," +
-                    $"\"Time\":\"{timeMs}\"," +
-                    $"\"data\":{{{dataContent}}}," +
-                    $"\"from\":\"CLIENT\"" +
-                "}";
-
-                using (RegistryKey key = Registry.CurrentUser.CreateSubKey(SubKeyPath))
-                {
-                    key?.SetValue(_realValueName, fullJson, RegistryValueKind.String);
-                }
-            }
-            catch (Exception ex)
-            {
-                OnLog?.Invoke($"[ERROR] Ошибка отправки: {ex.Message}");
-            }
+            OnLog?.Invoke($"[REGISTRY] WD err: {ex.Message}");
         }
+    }
 
-        private string FindFullValueName(string path, string prefix)
+    private void WaitForValueName()
+    {
+        while (_isRunning && _valueName == null)
         {
-            try
-            {
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(path))
-                {
-                    return key?.GetValueNames().FirstOrDefault(n => n.StartsWith(prefix));
-                }
-            }
-            catch { return null; }
-        }
+            _valueName = FindValueName();
 
-        private string GetRegistryString(string keyPath, string name)
+            if (_valueName == null)
+            {
+                Thread.Sleep(_lookupInterval);
+            }
+        }
+    }
+
+    private void WritePayload(string payload)
+    {
+        if (_valueName == null)
         {
-            if (string.IsNullOrEmpty(name)) return "";
-            try
-            {
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(keyPath))
-                {
-                    object rawValue = key?.GetValue(name);
-                    if (rawValue == null) return "";
-
-                    if (rawValue is byte[] bytes)
-                        return Encoding.UTF8.GetString(bytes).TrimEnd('\0');
-
-                    return rawValue.ToString();
-                }
-            }
-            catch { return ""; }
+            OnLog?.Invoke("[REGISTRY] GoreBox PlayerPrefs err");
+            return;
         }
 
-        public void Dispose() => Stop();
+        using var key = Registry.CurrentUser.CreateSubKey(SubKeyPath);
+        key?.SetValue(_valueName, payload, RegistryValueKind.String);
+    }
+
+    private static string? FindValueName()
+    {
+        try
+        {
+            using var key = Registry.CurrentUser.OpenSubKey(SubKeyPath);
+            return key?.GetValueNames().FirstOrDefault(name => name.StartsWith(ValuePrefix, StringComparison.Ordinal));
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    private static string ReadRegistryValue(string valueName)
+    {
+        try
+        {
+            using var key = Registry.CurrentUser.OpenSubKey(SubKeyPath);
+            var rawValue = key?.GetValue(valueName);
+
+            return rawValue switch
+            {
+                byte[] bytes => Encoding.UTF8.GetString(bytes).TrimEnd('\0'),
+                null => "",
+                _ => rawValue.ToString() ?? ""
+            };
+        }
+        catch
+        {
+            return "";
+        }
+    }
+
+    private static bool IsClientMessage(string payload)
+    {
+        try
+        {
+            var sender = JsonNode.Parse(payload)?["from"]?.ToString();
+            return string.Equals(sender, "CLIENT", StringComparison.OrdinalIgnoreCase);
+        }
+        catch
+        {
+            return payload.Contains("\"from\":\"CLIENT\"", StringComparison.OrdinalIgnoreCase);
+        }
+    }
+
+    private static string GetUnixTimeMs()
+    {
+        return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
     }
 }

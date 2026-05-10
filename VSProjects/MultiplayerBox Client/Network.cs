@@ -1,106 +1,182 @@
-﻿using NetBackend.Client;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
+using NetBackend.Client;
 using NetBackend.Server;
-using System;
-using System.Threading.Tasks;
 
-public class Network
+namespace MultiplayerBoxClient;
+
+internal sealed class Network
 {
-    public NetClient Client = new();
-    private NetHost _host = new();
+    private const int Port = 8888;
 
-    public async Task Start()
+    private readonly NetHost _host = new();
+    private CancellationTokenSource? _hostCts;
+    private Task? _hostTask;
+
+    public NetClient Client { get; } = new();
+
+    public async Task StartAsync()
     {
         Console.Clear();
-        Console.WriteLine("=== СЕТЕВОЕ МЕНЮ ===");
-        Console.WriteLine("1. Создать сервер (Host)");
-        Console.WriteLine("2. Подключиться к серверу (Client)");
+        Console.WriteLine("=== MultiplayerBox ===");
+        Console.WriteLine("1. Host room");
+        Console.WriteLine("2. Join room");
+        Console.Write("> ");
 
         var key = Console.ReadKey(true).Key;
 
-        if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
+        if (key is ConsoleKey.D1 or ConsoleKey.NumPad1)
         {
-            await RunHostMode();
+            await RunHostModeAsync();
+            return;
         }
-        else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
+
+        if (key is ConsoleKey.D2 or ConsoleKey.NumPad2)
         {
-            await RunClientMode();
+            await RunClientModeAsync();
         }
     }
 
-    private async Task RunHostMode()
+    public async Task StopAsync()
     {
-        Console.WriteLine("\n[HOST] Запуск сервера...");
-        _host.OnLog += (m) => Console.WriteLine($"[SERVER LOG]: {m}");
+        await Client.DisconnectAsync();
 
-        _ = _host.StartAsync(8888);
-
-        await Client.ConnectAsync("127.0.0.1", 8888);
-        string roomCode = await Client.CreateRoomAsync();
-
-        Console.WriteLine($"[HOST] Сервер запущен. Комната: {roomCode}");
-        Console.WriteLine("Нажмите любую клавишу для выхода...");
-        Console.ReadKey();
-    }
-
-    private async Task RunClientMode()
-    {
-        Console.Write("\nВведите IP сервера (по умолчанию 127.0.0.1): ");
-        string ip = Console.ReadLine();
-        if (string.IsNullOrEmpty(ip)) ip = "127.0.0.1";
-
-        try
+        if (_hostCts == null)
         {
-            await Client.ConnectAsync(ip, 8888);
-            Console.WriteLine("Подключено! Получение списка комнат...");
+            return;
+        }
 
-            string[] rooms = await Client.GetRoomsAsync();
+        _hostCts.Cancel();
 
-            if (rooms.Length == 0)
+        if (_hostTask != null)
+        {
+            try
             {
-                Console.WriteLine("Активных комнат не найдено. Нажмите любую клавишу...");
-                Console.ReadKey();
-                return;
+                await _hostTask.WaitAsync(TimeSpan.FromSeconds(2));
             }
-
-            int selectedIndex = 0;
-            bool roomSelected = false;
-
-            while (!roomSelected)
+            catch
             {
-                Console.Clear();
-                Console.WriteLine("=== ВЫБЕРИТЕ КОМНАТУ (Стрелки для выбора, Enter для входа) ===");
+            }
+        }
 
-                for (int i = 0; i < rooms.Length; i++)
+        _hostCts.Dispose();
+        _hostCts = null;
+        _hostTask = null;
+    }
+
+    private async Task RunHostModeAsync()
+    {
+        _host.OnLog += message => Console.WriteLine($"[HOST] {message}");
+        _host.OnRoomCreated += (roomId, clientId) => Console.WriteLine($"[HOST] Room {roomId} created by {clientId}");
+        _host.OnRoomJoined += (roomId, clientId) => Console.WriteLine($"[HOST] {clientId} joined {roomId}");
+        _host.OnMessageBroadcasted += (roomId, clientId, _) => Console.WriteLine($"[HOST] Message from {clientId} in {roomId}");
+
+        _hostCts = new CancellationTokenSource();
+        _hostTask = _host.StartAsync(Port, _hostCts.Token);
+
+        await Client.ConnectAsync(IPAddress.Loopback.ToString(), Port);
+
+        var roomCode = await Client.CreateRoomAsync();
+        Console.WriteLine();
+        Console.WriteLine($"Room code: {roomCode}");
+        Console.WriteLine($"Port: {Port}");
+        Console.WriteLine("Give this Radmin/LAN IP to other players:");
+
+        foreach (var address in GetLocalIPv4Addresses())
+        {
+            Console.WriteLine($"- {address}");
+        }
+
+        Console.WriteLine();
+        Console.WriteLine("Press any key to stop host.");
+        Console.ReadKey(true);
+
+        await StopAsync();
+    }
+
+    private async Task RunClientModeAsync()
+    {
+        Console.WriteLine();
+        Console.Write("Host IP: ");
+
+        var host = Console.ReadLine();
+
+        if (string.IsNullOrWhiteSpace(host))
+        {
+            host = IPAddress.Loopback.ToString();
+        }
+
+        await Client.ConnectAsync(host.Trim(), Port);
+
+        var rooms = await Client.GetRoomsAsync();
+
+        if (rooms.Length == 0)
+        {
+            Console.WriteLine("No active rooms found.");
+            Console.WriteLine("Press any key to exit.");
+            Console.ReadKey(true);
+            return;
+        }
+
+        var room = SelectRoom(rooms);
+        await Client.JoinRoomAsync(room);
+
+        Console.WriteLine();
+        Console.WriteLine($"Joined room: {room}");
+        Console.WriteLine("Press any key to disconnect.");
+        Console.ReadKey(true);
+
+        await StopAsync();
+    }
+
+    private static string SelectRoom(IReadOnlyList<string> rooms)
+    {
+        var selectedIndex = 0;
+
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine("Select room with arrows and Enter:");
+            Console.WriteLine();
+
+            for (var i = 0; i < rooms.Count; i++)
+            {
+                if (i == selectedIndex)
                 {
-                    if (i == selectedIndex)
-                    {
-                        Console.BackgroundColor = ConsoleColor.Gray;
-                        Console.ForegroundColor = ConsoleColor.Black;
-                        Console.WriteLine($"> Room: {rooms[i]} <");
-                        Console.ResetColor();
-                    }
-                    else
-                    {
-                        Console.WriteLine($"  Room: {rooms[i]}  ");
-                    }
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.BackgroundColor = ConsoleColor.Gray;
+                    Console.WriteLine($"> {rooms[i]} <");
+                    Console.ResetColor();
+                    continue;
                 }
 
-                var key = Console.ReadKey(true).Key;
-                if (key == ConsoleKey.UpArrow) selectedIndex = Math.Max(0, selectedIndex - 1);
-                else if (key == ConsoleKey.DownArrow) selectedIndex = Math.Min(rooms.Length - 1, selectedIndex + 1);
-                else if (key == ConsoleKey.Enter) roomSelected = true;
+                Console.WriteLine($"  {rooms[i]}");
             }
 
-            string selectedRoom = rooms[selectedIndex];
-            await Client.JoinRoomAsync(selectedRoom);
-            Console.WriteLine($"\nВы вошли в комнату: {selectedRoom}");
-            Console.WriteLine("Нажмите любую клавишу для выхода...");
-            Console.ReadKey();
+            var key = Console.ReadKey(true).Key;
+
+            selectedIndex = key switch
+            {
+                ConsoleKey.UpArrow => Math.Max(0, selectedIndex - 1),
+                ConsoleKey.DownArrow => Math.Min(rooms.Count - 1, selectedIndex + 1),
+                _ => selectedIndex
+            };
+
+            if (key == ConsoleKey.Enter)
+            {
+                return rooms[selectedIndex];
+            }
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Ошибка: {ex.Message}");
-            Console.ReadKey();
-        }
+    }
+
+    private static IEnumerable<IPAddress> GetLocalIPv4Addresses()
+    {
+        return NetworkInterface.GetAllNetworkInterfaces()
+            .Where(adapter => adapter.OperationalStatus == OperationalStatus.Up)
+            .SelectMany(adapter => adapter.GetIPProperties().UnicastAddresses)
+            .Select(address => address.Address)
+            .Where(address => address.AddressFamily == AddressFamily.InterNetwork && !IPAddress.IsLoopback(address))
+            .Distinct();
     }
 }
