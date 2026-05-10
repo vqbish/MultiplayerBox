@@ -6,9 +6,9 @@ end
 
 function base64.makeencoder(s62, s63, spad)
 	local encoder = {}
-	local alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" .. (s62 or "+") .. (s63 or "/") .. (spad or "=")
+	local alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" .. (s62 or "-") .. (s63 or "_") .. (spad or "=")
 	for i = 1, #alphabet do
-		encoder[i - 1] = string.byte(alphabet,i)
+		encoder[i - 1] = string.byte(alphabet, i)
 	end
 	return encoder
 end
@@ -34,7 +34,7 @@ function base64.encode(str, encoder, usecaching)
 	local cache = {}
 
 	for i = 1, n - lastn, 3 do
-		local a, b, c = string.byte(str,i, i + 2)
+		local a, b, c = string.byte(str, i, i + 2)
 		local v = a * 0x10000 + b * 0x100 + c
 		local s
 
@@ -63,11 +63,11 @@ function base64.encode(str, encoder, usecaching)
 	end
 
 	if lastn == 2 then
-		local a, b = string.byte(str,n - 1, n)
+		local a, b = string.byte(str, n - 1, n)
 		local v = a * 0x10000 + b * 0x100
 		t[k] = char(encoder[extract(v, 18, 6)], encoder[extract(v, 12, 6)], encoder[extract(v, 6, 6)], encoder[64])
 	elseif lastn == 1 then
-		local v = string.byte(str,n) * 0x10000
+		local v = string.byte(str, n) * 0x10000
 		t[k] = char(encoder[extract(v, 18, 6)], encoder[extract(v, 12, 6)], encoder[64], encoder[64])
 	end
 
@@ -88,7 +88,7 @@ function base64.decode(b64, decoder, usecaching)
 
 	local pattern = '[^%w%+%/%=]'
 	if s62 and s63 then
-		pattern = string.format(('[^%%w%%%s%%%s%%=]'), char(s62), char(s63))
+		pattern = string.format('[^%%w%%%s%%%s%%=]', char(s62), char(s63))
 	end
 
 	b64 = string.gsub(b64, pattern, '')
