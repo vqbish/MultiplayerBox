@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GoreBoxRegistryLinker")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+64b8a486afd9e79b146d6c40c855b6c296723b7c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+06f575419a5555c9f81e8ddf82dbfba7e50c99ce")]
 [assembly: System.Reflection.AssemblyProductAttribute("GoreBoxRegistryLinker")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GoreBoxRegistryLinker")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

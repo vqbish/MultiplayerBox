@@ -170,10 +170,26 @@ public sealed class RegistryMonitor : IDisposable
             return;
         }
 
-        using var key = Registry.CurrentUser.CreateSubKey(SubKeyPath);
-        key?.SetValue(_valueName, payload, RegistryValueKind.String);
-    }
+        try
+        {
+            using var key = Registry.CurrentUser.OpenSubKey(SubKeyPath, true) ?? Registry.CurrentUser.CreateSubKey(SubKeyPath, true);
+            if (key == null)
+            {
+                OnLog?.Invoke("[REGISTRY] Failed to open/create registry key");
+                return;
+            }
 
+            key.SetValue(_valueName, payload, RegistryValueKind.String);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            OnLog?.Invoke($"[REGISTRY] Access denied: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            OnLog?.Invoke($"[REGISTRY] Packet write failed: {ex.Message}");
+        }
+    }
     private static string? FindValueName()
     {
         try

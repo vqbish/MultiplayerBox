@@ -21,3 +21,15 @@ D:\GBMPMod\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\obj\Debug\net10.0\Gor
 D:\GBMPMod\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\obj\Debug\net10.0\refint\GoreBoxRegistryLinker.dll
 D:\GBMPMod\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.pdb
 D:\GBMPMod\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\obj\Debug\net10.0\ref\GoreBoxRegistryLinker.dll
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\bin\Debug\net10.0\GoreBoxRegistryLinker.deps.json
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\bin\Debug\net10.0\GoreBoxRegistryLinker.dll
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\bin\Debug\net10.0\GoreBoxRegistryLinker.pdb
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.AssemblyInfoInputs.cache
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.AssemblyInfo.cs
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.csproj.CoreCompileInputs.cache
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.sourcelink.json
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.dll
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\obj\Debug\net10.0\refint\GoreBoxRegistryLinker.dll
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.pdb
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\obj\Debug\net10.0\ref\GoreBoxRegistryLinker.dll
