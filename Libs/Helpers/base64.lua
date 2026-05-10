@@ -63,12 +63,12 @@ function base64.decode( b64, decoder, usecaching )
 	local pattern = '[^%w%+%/%=]'
 	if decoder then
 		local s62, s63
-		for charcode, b64code in pairs( decoder ) do
+		for charcode, b64code in tableIterators.pairs( decoder ) do
 			if b64code == 62 then s62 = charcode
 			elseif b64code == 63 then s63 = charcode
 			end
 		end
-		pattern = ('[^%%w%%%s%%%s%%=]'):format( char(s62), char(s63) )
+		pattern = string.format(('[^%%w%%%s%%%s%%=]'), char(s62), char(s63) )
 	end
 	b64 = string.gsub(b64, pattern, '' )
 	local cache = usecaching and {}
