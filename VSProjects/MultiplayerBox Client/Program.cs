@@ -37,7 +37,8 @@ internal static class Program
         Network.Client.OnError += message => ConsoleUi.Log("NETWORK", message, ConsoleColor.Red);
         Network.Client.OnMessageReceived += HandleNetworkMessage;
 
-        RegistryMonitor.Start();
+        RegistryMonitor.Start(); 
+
 
         try
         {
