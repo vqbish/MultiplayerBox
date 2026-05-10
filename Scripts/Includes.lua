@@ -25,5 +25,9 @@ end
 
 Logger = Includes.Include("Logger.lua")
 LogTypes = Includes.Include("LogTypes.lua")
+StringResolvers = Includes.Include("StringResolvers.lua")
+NetworkManager = Includes.Include("NetworkManager.lua")
+TickManager = Includes.Include("TickManager.lua")
+TableHelpers = Includes.Include("TableHelpers.lua")
 
 return Includes
