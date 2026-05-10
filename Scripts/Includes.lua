@@ -30,5 +30,6 @@ NetworkManager = Includes.Include("NetworkManager.lua")
 TickManager = Includes.Include("TickManager.lua")
 TableHelpers = Includes.Include("TableHelpers.lua")
 ChatGUI = Includes.Include("ChatGUI.lua")
+ChatMaster = Includes.Include("ChatMaster.lua")
 
 return Includes
