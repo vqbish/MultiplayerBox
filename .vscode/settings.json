@@ -1,0 +1,18 @@
+{
+    "Lua.workspace.library": [
+        ".vscode/lua/gorebox"
+    ],
+    "Lua.runtime.special": {
+        "basicModule.assert": "assert",
+        "loadModule.dofile": "dofile",
+        "basicModule.error": "error",
+        "loadModule.loadfile": "loadfile",
+        "loadModule.loadfilesafe": "loadfile",
+        "errorHandling.pcall": "pcall",
+        "metaTable.rawget": "rawget",
+        "metaTable.rawset": "rawset",
+        "metaTable.setmetatable": "setmetatable",
+        "basicModule.type": "type",
+        "errorHandling.xpcall": "xpcall"
+    }
+}

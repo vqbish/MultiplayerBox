@@ -1,0 +1,10 @@
+{
+  "name": "MultiplayerBox",
+  "description": "Adds mp to GoreBox",
+  "mainScript": "Scripts/Init.lua",
+  "version": "0.0.1 Alpha",
+  "active": true,
+  "unloadOnError": false,
+  "safeMode": false,
+  "isPlugin": true
+}
