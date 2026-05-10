@@ -1,14 +1,14 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\Projects\\C#\\MultiplayerBox Client\\",
+  "WorkspaceRootPath": "D:\\GBMPMod\\MultiplayerBox\\VSProjects\\MultiplayerBox Client\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{0D0F0573-D700-41DA-8EDB-25C4EB90A239}|MultiplayerBox Client.csproj|d:\\projects\\c#\\multiplayerbox client\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{0D0F0573-D700-41DA-8EDB-25C4EB90A239}|MultiplayerBox Client.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{873D537C-7251-C207-B028-72E9E1900B54}|MultiplayerBox Client.csproj|d:\\gbmpmod\\multiplayerbox\\vsprojects\\multiplayerbox client\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{873D537C-7251-C207-B028-72E9E1900B54}|MultiplayerBox Client.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{0D0F0573-D700-41DA-8EDB-25C4EB90A239}|MultiplayerBox Client.csproj|d:\\projects\\c#\\multiplayerbox client\\network.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{0D0F0573-D700-41DA-8EDB-25C4EB90A239}|MultiplayerBox Client.csproj|solutionrelative:network.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{873D537C-7251-C207-B028-72E9E1900B54}|MultiplayerBox Client.csproj|d:\\gbmpmod\\multiplayerbox\\vsprojects\\multiplayerbox client\\network.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{873D537C-7251-C207-B028-72E9E1900B54}|MultiplayerBox Client.csproj|solutionrelative:network.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,34 +18,29 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 1,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
-            },
             {
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "Network.cs",
-              "DocumentMoniker": "D:\\Projects\\C#\\MultiplayerBox Client\\Network.cs",
+              "DocumentMoniker": "D:\\GBMPMod\\MultiplayerBox\\VSProjects\\MultiplayerBox Client\\Network.cs",
               "RelativeDocumentMoniker": "Network.cs",
-              "ToolTip": "D:\\Projects\\C#\\MultiplayerBox Client\\Network.cs",
+              "ToolTip": "D:\\GBMPMod\\MultiplayerBox\\VSProjects\\MultiplayerBox Client\\Network.cs",
               "RelativeToolTip": "Network.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-10T14:02:49.929Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-10T14:02:49.929Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Program.cs",
-              "DocumentMoniker": "D:\\Projects\\C#\\MultiplayerBox Client\\Program.cs",
+              "DocumentMoniker": "D:\\GBMPMod\\MultiplayerBox\\VSProjects\\MultiplayerBox Client\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "D:\\Projects\\C#\\MultiplayerBox Client\\Program.cs",
+              "ToolTip": "D:\\GBMPMod\\MultiplayerBox\\VSProjects\\MultiplayerBox Client\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAA0AAAAAAAAAAAAgwBcAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAABBAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-10T13:33:46.502Z",
               "EditorCaption": ""

@@ -81,7 +81,6 @@ internal sealed class Network
         Console.WriteLine();
         Console.WriteLine($"Room code: {roomCode}");
         Console.WriteLine($"Port: {Port}");
-        Console.WriteLine("Give this Radmin/LAN IP to other players:");
 
         foreach (var address in GetLocalIPv4Addresses())
         {
