@@ -8,23 +8,23 @@
     "net10.0": []
   },
   "packageFolders": {
-    "C:\\Users\\kakao\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\vabish\\.nuget\\packages\\": {},
+    "D:\\Applications\\Utility\\Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\GBMPMod\\MultiplayerBox\\VSProjects\\GoreBoxRegistryLinker\\GoreBoxRegistryLinker.csproj",
+      "projectUniqueName": "C:\\Users\\vabish\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\GoreBoxRegistryLinker\\GoreBoxRegistryLinker.csproj",
       "projectName": "GoreBoxRegistryLinker",
-      "projectPath": "D:\\GBMPMod\\MultiplayerBox\\VSProjects\\GoreBoxRegistryLinker\\GoreBoxRegistryLinker.csproj",
-      "packagesPath": "C:\\Users\\kakao\\.nuget\\packages\\",
-      "outputPath": "D:\\GBMPMod\\MultiplayerBox\\VSProjects\\GoreBoxRegistryLinker\\obj\\",
+      "projectPath": "C:\\Users\\vabish\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\GoreBoxRegistryLinker\\GoreBoxRegistryLinker.csproj",
+      "packagesPath": "C:\\Users\\vabish\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\vabish\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\GoreBoxRegistryLinker\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        "D:\\Applications\\Utility\\Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\kakao\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\vabish\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -33,10 +33,12 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net10.0": {
+          "framework": "net10.0",
           "targetAlias": "net10.0",
           "projectReferences": {}
         }
@@ -55,6 +57,7 @@
     },
     "frameworks": {
       "net10.0": {
+        "framework": "net10.0",
         "targetAlias": "net10.0",
         "imports": [
           "net461",
@@ -72,7 +75,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.202/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",

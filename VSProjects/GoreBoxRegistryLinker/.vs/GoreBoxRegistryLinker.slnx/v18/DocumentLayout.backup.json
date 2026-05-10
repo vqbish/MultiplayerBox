@@ -1,10 +1,10 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\Projects\\C#\\GoreBoxRegistryLinker\\",
+  "WorkspaceRootPath": "C:\\Users\\vabish\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\GoreBoxRegistryLinker\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{67772009-73AE-41C9-8914-DA5D1D18D6DF}|GoreBoxRegistryLinker.csproj|d:\\projects\\c#\\goreboxregistrylinker\\goreboxregistrylinker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{67772009-73AE-41C9-8914-DA5D1D18D6DF}|GoreBoxRegistryLinker.csproj|solutionrelative:goreboxregistrylinker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{FF9203EE-932F-962C-11CB-A3B0E4FF3F65}|GoreBoxRegistryLinker.csproj|c:\\users\\vabish\\appdata\\locallow\\f2games\\gorebox\\mods\\multiplayerbox\\vsprojects\\goreboxregistrylinker\\goreboxregistrylinker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FF9203EE-932F-962C-11CB-A3B0E4FF3F65}|GoreBoxRegistryLinker.csproj|solutionrelative:goreboxregistrylinker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -24,11 +24,11 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "GoreBoxRegistryLinker.cs",
-              "DocumentMoniker": "D:\\Projects\\C#\\GoreBoxRegistryLinker\\GoreBoxRegistryLinker.cs",
+              "DocumentMoniker": "C:\\Users\\vabish\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\GoreBoxRegistryLinker\\GoreBoxRegistryLinker.cs",
               "RelativeDocumentMoniker": "GoreBoxRegistryLinker.cs",
-              "ToolTip": "D:\\Projects\\C#\\GoreBoxRegistryLinker\\GoreBoxRegistryLinker.cs",
+              "ToolTip": "C:\\Users\\vabish\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\GoreBoxRegistryLinker\\GoreBoxRegistryLinker.cs",
               "RelativeToolTip": "GoreBoxRegistryLinker.cs",
-              "ViewState": "AgIAAAQAAAAAAAAAAAAmwBMAAAA+AAAAAAAAAA==",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAmwA4AAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-10T14:07:21.017Z",
               "EditorCaption": ""

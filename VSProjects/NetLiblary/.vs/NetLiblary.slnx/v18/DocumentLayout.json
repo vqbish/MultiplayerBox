@@ -1,7 +1,20 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\Projects\\C#\\NetLiblary\\",
-  "Documents": [],
+  "WorkspaceRootPath": "C:\\Users\\vabish\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\NetLiblary\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{30FCC4A8-8661-3762-5620-AE9BB7FFC580}|NetLiblary.csproj|c:\\users\\vabish\\appdata\\locallow\\f2games\\gorebox\\mods\\multiplayerbox\\vsprojects\\netliblary\\client\\netclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{30FCC4A8-8661-3762-5620-AE9BB7FFC580}|NetLiblary.csproj|solutionrelative:client\\netclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{30FCC4A8-8661-3762-5620-AE9BB7FFC580}|NetLiblary.csproj|c:\\users\\vabish\\appdata\\locallow\\f2games\\gorebox\\mods\\multiplayerbox\\vsprojects\\netliblary\\server\\nethost.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{30FCC4A8-8661-3762-5620-AE9BB7FFC580}|NetLiblary.csproj|solutionrelative:server\\nethost.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{30FCC4A8-8661-3762-5620-AE9BB7FFC580}|NetLiblary.csproj|c:\\users\\vabish\\appdata\\locallow\\f2games\\gorebox\\mods\\multiplayerbox\\vsprojects\\netliblary\\shared\\shared.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{30FCC4A8-8661-3762-5620-AE9BB7FFC580}|NetLiblary.csproj|solutionrelative:shared\\shared.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,11 +22,50 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "NetClient.cs",
+              "DocumentMoniker": "C:\\Users\\vabish\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\NetLiblary\\Client\\NetClient.cs",
+              "RelativeDocumentMoniker": "Client\\NetClient.cs",
+              "ToolTip": "C:\\Users\\vabish\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\NetLiblary\\Client\\NetClient.cs",
+              "RelativeToolTip": "Client\\NetClient.cs",
+              "ViewState": "AgIAACABAAAAAAAAAAAYwAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-10T16:59:38.443Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "NetHost.cs",
+              "DocumentMoniker": "C:\\Users\\vabish\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\NetLiblary\\Server\\NetHost.cs",
+              "RelativeDocumentMoniker": "Server\\NetHost.cs",
+              "ToolTip": "C:\\Users\\vabish\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\NetLiblary\\Server\\NetHost.cs",
+              "RelativeToolTip": "Server\\NetHost.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-10T16:59:21.074Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Shared.cs",
+              "DocumentMoniker": "C:\\Users\\vabish\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\NetLiblary\\Shared\\Shared.cs",
+              "RelativeDocumentMoniker": "Shared\\Shared.cs",
+              "ToolTip": "C:\\Users\\vabish\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\NetLiblary\\Shared\\Shared.cs",
+              "RelativeToolTip": "Shared\\Shared.cs",
+              "ViewState": "AgIAACoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-10T16:59:15.582Z",
+              "EditorCaption": ""
             }
           ]
         }
