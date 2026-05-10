@@ -40,7 +40,7 @@ function NetworkManager.Update()
     local status, packet = errorHandling.pcall(json.parse, currentPrefs)
 
     if not status or basicModule.type(packet) ~= "table" then
-        Logger.Log("Network packet json parse failed", LogTypes.Warning)
+        Logger.Log("Network packet json parse failed. Message: " .. currentPrefs, LogTypes.Warning)
         return
     end
 
