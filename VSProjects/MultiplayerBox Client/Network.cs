@@ -8,46 +8,121 @@ namespace MultiplayerBoxClient;
 
 internal sealed class Network
 {
-    private const int Port = 8888;
+    private const int DefaultPort = 8888;
 
     private readonly NetHost _host = new();
     private CancellationTokenSource? _hostCts;
     private Task? _hostTask;
+    private bool _hostEventsAttached;
+    private bool _clientConnected;
+    private string? _currentHostIp;
+    private string? _currentRoomCode;
+    private IReadOnlyList<string> _cachedRooms = Array.Empty<string>();
 
     public NetClient Client { get; } = new();
 
-    public async Task StartAsync()
+    public int Port { get; set; } = DefaultPort;
+    public string DefaultHostIp { get; set; } = IPAddress.Loopback.ToString();
+    public bool AutoRefreshRooms { get; set; } = true;
+    public int RefreshIntervalMs { get; set; } = 1500;
+
+    public bool IsHosting => _hostCts != null && !_hostCts.IsCancellationRequested;
+    public bool IsClientConnected => _clientConnected;
+
+    public string? CurrentHostIp => _currentHostIp;
+    public string? CurrentRoomCode => _currentRoomCode;
+
+    public IReadOnlyList<string> CachedRooms => _cachedRooms;
+
+    public int IncomingPackets { get; private set; }
+    public int OutgoingPackets { get; private set; }
+
+    public IReadOnlyList<IPAddress> LocalAddresses => GetLocalIPv4Addresses().ToArray();
+
+    public void MarkClientConnected()
     {
-        Console.Clear();
-        Console.WriteLine("=== MultiplayerBox ===");
-        Console.WriteLine("1. Host room");
-        Console.WriteLine("2. Join room");
-        Console.Write("> ");
+        _clientConnected = true;
+    }
 
-        var key = Console.ReadKey(true).Key;
+    public void MarkClientDisconnected()
+    {
+        _clientConnected = false;
+    }
 
-        if (key is ConsoleKey.D1 or ConsoleKey.NumPad1)
-        {
-            await RunHostModeAsync();
-            return;
-        }
+    public void MarkIncomingPacket()
+    {
+        IncomingPackets++;
+    }
 
-        if (key is ConsoleKey.D2 or ConsoleKey.NumPad2)
-        {
-            await RunClientModeAsync();
-        }
+    public void MarkOutgoingPacket()
+    {
+        OutgoingPackets++;
+    }
+
+    public async Task StartHostedRoomAsync()
+    {
+        await StopAsync();
+        AttachHostEventsOnce();
+
+        _hostCts = new CancellationTokenSource();
+        _hostTask = _host.StartAsync(Port, _hostCts.Token);
+
+        await Task.Delay(150);
+
+        _currentHostIp = IPAddress.Loopback.ToString();
+        await Client.ConnectAsync(IPAddress.Loopback.ToString(), Port);
+        MarkClientConnected();
+
+        _currentRoomCode = await Client.CreateRoomAsync();
+        _cachedRooms = Array.Empty<string>();
+    }
+
+    public async Task ConnectAsync(string host)
+    {
+        _currentHostIp = host.Trim();
+        await Client.ConnectAsync(_currentHostIp, Port);
+    }
+
+    public async Task<IReadOnlyList<string>> RefreshRoomsAsync()
+    {
+        var rooms = await Client.GetRoomsAsync();
+        _cachedRooms = rooms.ToArray();
+        return _cachedRooms;
+    }
+
+    public async Task JoinRoomAsync(string room)
+    {
+        await Client.JoinRoomAsync(room);
+        _currentRoomCode = room;
     }
 
     public async Task StopAsync()
     {
-        await Client.DisconnectAsync();
+        try
+        {
+            await Client.DisconnectAsync();
+        }
+        catch
+        {
+        }
+
+        MarkClientDisconnected();
 
         if (_hostCts == null)
         {
+            _currentHostIp = null;
+            _currentRoomCode = null;
+            _cachedRooms = Array.Empty<string>();
             return;
         }
 
-        _hostCts.Cancel();
+        try
+        {
+            _hostCts.Cancel();
+        }
+        catch
+        {
+        }
 
         if (_hostTask != null)
         {
@@ -63,110 +138,24 @@ internal sealed class Network
         _hostCts.Dispose();
         _hostCts = null;
         _hostTask = null;
+        _currentHostIp = null;
+        _currentRoomCode = null;
+        _cachedRooms = Array.Empty<string>();
     }
 
-    private async Task RunHostModeAsync()
+    private void AttachHostEventsOnce()
     {
-        _host.OnLog += message => Console.WriteLine($"[HOST] {message}");
-        _host.OnRoomCreated += (roomId, clientId) => Console.WriteLine($"[HOST] Room {roomId} created by {clientId}");
-        _host.OnRoomJoined += (roomId, clientId) => Console.WriteLine($"[HOST] {clientId} joined {roomId}");
-        _host.OnMessageBroadcasted += (roomId, clientId, _) => Console.WriteLine($"[HOST] Message from {clientId} in {roomId}");
-
-        _hostCts = new CancellationTokenSource();
-        _hostTask = _host.StartAsync(Port, _hostCts.Token);
-
-        await Client.ConnectAsync(IPAddress.Loopback.ToString(), Port);
-
-        var roomCode = await Client.CreateRoomAsync();
-        Console.WriteLine();
-        Console.WriteLine($"Room code: {roomCode}");
-        Console.WriteLine($"Port: {Port}");
-
-        foreach (var address in GetLocalIPv4Addresses())
+        if (_hostEventsAttached)
         {
-            Console.WriteLine($"- {address}");
-        }
-
-        Console.WriteLine();
-        Console.WriteLine("Press any key to stop host.");
-        Console.ReadKey(true);
-
-        await StopAsync();
-    }
-
-    private async Task RunClientModeAsync()
-    {
-        Console.WriteLine();
-        Console.Write("Host IP: ");
-
-        var host = Console.ReadLine();
-
-        if (string.IsNullOrWhiteSpace(host))
-        {
-            host = IPAddress.Loopback.ToString();
-        }
-
-        await Client.ConnectAsync(host.Trim(), Port);
-
-        var rooms = await Client.GetRoomsAsync();
-
-        if (rooms.Length == 0)
-        {
-            Console.WriteLine("No active rooms found.");
-            Console.WriteLine("Press any key to exit.");
-            Console.ReadKey(true);
             return;
         }
 
-        var room = SelectRoom(rooms);
-        await Client.JoinRoomAsync(room);
+        _hostEventsAttached = true;
 
-        Console.WriteLine();
-        Console.WriteLine($"Joined room: {room}");
-        Console.WriteLine("Press any key to disconnect.");
-        Console.ReadKey(true);
-
-        await StopAsync();
-    }
-
-    private static string SelectRoom(IReadOnlyList<string> rooms)
-    {
-        var selectedIndex = 0;
-
-        while (true)
-        {
-            Console.Clear();
-            Console.WriteLine("Select room with arrows and Enter:");
-            Console.WriteLine();
-
-            for (var i = 0; i < rooms.Count; i++)
-            {
-                if (i == selectedIndex)
-                {
-                    Console.ForegroundColor = ConsoleColor.Black;
-                    Console.BackgroundColor = ConsoleColor.Gray;
-                    Console.WriteLine($"> {rooms[i]} <");
-                    Console.ResetColor();
-                    continue;
-                }
-
-                Console.WriteLine($"  {rooms[i]}");
-            }
-
-            var key = Console.ReadKey(true).Key;
-
-            selectedIndex = key switch
-            {
-                ConsoleKey.UpArrow => Math.Max(0, selectedIndex - 1),
-                ConsoleKey.DownArrow => Math.Min(rooms.Count - 1, selectedIndex + 1),
-                _ => selectedIndex
-            };
-
-            if (key == ConsoleKey.Enter)
-            {
-                return rooms[selectedIndex];
-            }
-        }
+        _host.OnLog += message => ConsoleUi.Log("HOST", message, ConsoleColor.DarkGray);
+        _host.OnRoomCreated += (roomId, clientId) => ConsoleUi.Log("HOST", $"Room {roomId} created by {clientId}", ConsoleColor.Green);
+        _host.OnRoomJoined += (roomId, clientId) => ConsoleUi.Log("HOST", $"{clientId} joined {roomId}", ConsoleColor.Cyan);
+        _host.OnMessageBroadcasted += (roomId, clientId, _) => ConsoleUi.Log("HOST", $"Message from {clientId} in {roomId}", ConsoleColor.DarkCyan);
     }
 
     private static IEnumerable<IPAddress> GetLocalIPv4Addresses()
