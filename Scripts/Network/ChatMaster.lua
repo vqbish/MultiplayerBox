@@ -24,6 +24,13 @@ function ChatMaster.OnNetworkData(data)
         return
     end
 
+    if data.Message == nil then
+        data.Message = "NULL"
+    end
+    if data.SenderNickname == nil then
+        data.SenderNickname = "NULL"
+    end
+
     local sender = Base64.decode(data.SenderNickname, nil, false)
     local message = Base64.decode(data.Message, nil, false)
 
