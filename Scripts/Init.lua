@@ -43,7 +43,7 @@ if #found <= 0 then
 end
 
 Includes = File.DoFile(found[#found])
-ChatGUI.BindNetwork()
+--ChatGUI.BindNetwork()
 
 function Update()
     TickManager.Update()
@@ -51,5 +51,37 @@ function Update()
 end
 
 function OnGUIOver()
-    ChatGUI.Draw()
+    --ChatGUI.Draw()
 end
+
+function OnChatMessage(message, sender)
+    local message = ChatGUI.Trim(message)
+
+    if message == "" then
+        return
+    end
+
+    NetworkManager.Send({
+        Type = "chatMessage",
+        Message = message
+    })
+end
+
+function OnNetworkData(data)
+    if basicModule.type(data) ~= "table" then
+        return
+    end
+    Logger.Log("message: " .. json.serialize(data))
+
+    local packetType = data.Type or data.type
+
+    if packetType ~= "chatMessage" then
+        return
+    end
+
+    local sender = data.Sender or data.sender or "Peer"
+    local message = data.Message or data.message or ""
+
+    Server.SendChatMessage("<color=red>" .. sender .. "</color>: " .. message)
+end
+NetworkManager.AddOnGetListener(OnNetworkData)
