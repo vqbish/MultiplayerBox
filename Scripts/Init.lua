@@ -44,4 +44,9 @@ end
 function OnGet(args, time)
     Logger.Log("Args: " .. json.serialize(args) .. " Time: " .. basicModule.tostring(time))
 end
+
+function OnGUIOver()
+    ChatGUI.Draw()
+end
+
 NetworkManager.AddOnGetListener(OnGet)

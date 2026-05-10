@@ -29,5 +29,6 @@ StringResolvers = Includes.Include("StringResolvers.lua")
 NetworkManager = Includes.Include("NetworkManager.lua")
 TickManager = Includes.Include("TickManager.lua")
 TableHelpers = Includes.Include("TableHelpers.lua")
+ChatGUI = Includes.Include("ChatGUI.lua")
 
 return Includes

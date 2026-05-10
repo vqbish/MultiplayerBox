@@ -41,6 +41,7 @@ function NetworkManager.Update()
         local getTime = tableData.Time
         local args = {}
         local counter = 0
+        local msgSender = tableData.from
 
         for i, data in tableIterators.pairs(argsraw) do
             counter = counter + 1
@@ -48,7 +49,9 @@ function NetworkManager.Update()
             args[counter] = StringResolvers.TransferStringToType(data)
         end
 
-        NetworkManager.OnGet(args, getTime)
+        if msgSender ~= "MOD" then   
+            NetworkManager.OnGet(args, getTime)
+        end
     end
 end
 
@@ -65,19 +68,26 @@ function NetworkManager.OnGet(args, getTime)
 end
 
 function NetworkManager.Send(args)
+    if basicModule.type(args) ~= "table" then
+        Debug.Log("NetworkManager: Ошибка! Send ожидает таблицу {key = value}")
+        return
+    end
+
     local argsforjson = {}
-    for i, data in tableIterators.pairs(args) do
-        argsforjson["args" .. i - 1] = basicModule.tostring(data)
+    
+    for key, data in tableIterators.pairs(args) do
+        argsforjson[basicModule.tostring(key)] = StringResolvers.TransferTypeToString(data)
     end
 
     local newTable = {
         Type = "POST",
         Time = basicModule.tostring(Time.GetRealTimeMs()),
-        data = argsforjson
+        data = argsforjson,
+        from = "MOD"
     }
 
     local resultJson = json.serialize(newTable)
-    Debug.Log("post " .. resultJson)
+        
     File.SetPlayerPrefsStr(NetworkManager.PrefsKey, resultJson)
 end
 
