@@ -1,11 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "t/d0cCs0sRA=",
+  "dgSpecHash": "Zrmp6pt0N3Q=",
   "success": true,
-  "projectFilePath": "D:\\Projects\\C#\\MultiplayerBox Client\\MultiplayerBox Client.csproj",
-  "expectedPackageFiles": [
-    "C:\\Users\\vabish\\.nuget\\packages\\system.codedom\\10.0.7\\system.codedom.10.0.7.nupkg.sha512",
-    "C:\\Users\\vabish\\.nuget\\packages\\system.management\\10.0.7\\system.management.10.0.7.nupkg.sha512"
-  ],
+  "projectFilePath": "D:\\GBMPMod\\MultiplayerBox\\VSProjects\\MultiplayerBox Client\\MultiplayerBox Client.csproj",
+  "expectedPackageFiles": [],
   "logs": []
 }

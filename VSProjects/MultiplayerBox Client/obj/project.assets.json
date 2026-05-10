@@ -2,135 +2,64 @@
   "version": 3,
   "targets": {
     "net10.0": {
-      "System.CodeDom/10.0.7": {
-        "type": "package",
+      "GoreBoxRegistryLinker/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
         "compile": {
-          "lib/net10.0/System.CodeDom.dll": {
-            "related": ".xml"
-          }
+          "bin/placeholder/GoreBoxRegistryLinker.dll": {}
         },
         "runtime": {
-          "lib/net10.0/System.CodeDom.dll": {
-            "related": ".xml"
-          }
-        },
-        "build": {
-          "buildTransitive/net8.0/_._": {}
+          "bin/placeholder/GoreBoxRegistryLinker.dll": {}
         }
       },
-      "System.Management/10.0.7": {
-        "type": "package",
-        "dependencies": {
-          "System.CodeDom": "10.0.7"
-        },
+      "NetLiblary/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
         "compile": {
-          "lib/net10.0/System.Management.dll": {
-            "related": ".xml"
-          }
+          "bin/placeholder/NetLiblary.dll": {}
         },
         "runtime": {
-          "lib/net10.0/System.Management.dll": {
-            "related": ".xml"
-          }
-        },
-        "build": {
-          "buildTransitive/net8.0/_._": {}
-        },
-        "runtimeTargets": {
-          "runtimes/win/lib/net10.0/System.Management.dll": {
-            "assetType": "runtime",
-            "rid": "win"
-          }
+          "bin/placeholder/NetLiblary.dll": {}
         }
       }
     }
   },
   "libraries": {
-    "System.CodeDom/10.0.7": {
-      "sha512": "bwKU+E9lAt6wRDtSdPnmcnKEev5hpUrQOPBIOVYXfN69GQPYJv9IxeifiBOm53QzYmARUjEKNwPlFALE9Ab53Q==",
-      "type": "package",
-      "path": "system.codedom/10.0.7",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "Icon.png",
-        "PACKAGE.md",
-        "THIRD-PARTY-NOTICES.TXT",
-        "buildTransitive/net461/System.CodeDom.targets",
-        "buildTransitive/net462/_._",
-        "buildTransitive/net8.0/_._",
-        "buildTransitive/netcoreapp2.0/System.CodeDom.targets",
-        "lib/net10.0/System.CodeDom.dll",
-        "lib/net10.0/System.CodeDom.xml",
-        "lib/net462/System.CodeDom.dll",
-        "lib/net462/System.CodeDom.xml",
-        "lib/net8.0/System.CodeDom.dll",
-        "lib/net8.0/System.CodeDom.xml",
-        "lib/net9.0/System.CodeDom.dll",
-        "lib/net9.0/System.CodeDom.xml",
-        "lib/netstandard2.0/System.CodeDom.dll",
-        "lib/netstandard2.0/System.CodeDom.xml",
-        "system.codedom.10.0.7.nupkg.sha512",
-        "system.codedom.nuspec",
-        "useSharedDesignerContext.txt"
-      ]
+    "GoreBoxRegistryLinker/1.0.0": {
+      "type": "project",
+      "path": "../GoreBoxRegistryLinker/GoreBoxRegistryLinker.csproj",
+      "msbuildProject": "../GoreBoxRegistryLinker/GoreBoxRegistryLinker.csproj"
     },
-    "System.Management/10.0.7": {
-      "sha512": "urkYf/JYCGUSF7+95BF2yM5E+QwnpR1Sf23vBw/niZfNbIkxvwYgRV0eoOq5wmz44JLEZ2Jojxa6nvgkrPVGfg==",
-      "type": "package",
-      "path": "system.management/10.0.7",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "Icon.png",
-        "PACKAGE.md",
-        "THIRD-PARTY-NOTICES.TXT",
-        "buildTransitive/net8.0/_._",
-        "buildTransitive/netcoreapp2.0/System.Management.targets",
-        "lib/net10.0/System.Management.dll",
-        "lib/net10.0/System.Management.xml",
-        "lib/net462/_._",
-        "lib/net8.0/System.Management.dll",
-        "lib/net8.0/System.Management.xml",
-        "lib/net9.0/System.Management.dll",
-        "lib/net9.0/System.Management.xml",
-        "lib/netstandard2.0/System.Management.dll",
-        "lib/netstandard2.0/System.Management.xml",
-        "runtimes/win/lib/net10.0/System.Management.dll",
-        "runtimes/win/lib/net10.0/System.Management.xml",
-        "runtimes/win/lib/net8.0/System.Management.dll",
-        "runtimes/win/lib/net8.0/System.Management.xml",
-        "runtimes/win/lib/net9.0/System.Management.dll",
-        "runtimes/win/lib/net9.0/System.Management.xml",
-        "system.management.10.0.7.nupkg.sha512",
-        "system.management.nuspec",
-        "useSharedDesignerContext.txt"
-      ]
+    "NetLiblary/1.0.0": {
+      "type": "project",
+      "path": "../NetLiblary/NetLiblary.csproj",
+      "msbuildProject": "../NetLiblary/NetLiblary.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net10.0": [
-      "System.Management >= 10.0.7"
+      "GoreBoxRegistryLinker >= 1.0.0",
+      "NetLiblary >= 1.0.0"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\vabish\\.nuget\\packages\\": {},
-    "D:\\Applications\\Utility\\Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\kakao\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Projects\\C#\\MultiplayerBox Client\\MultiplayerBox Client.csproj",
+      "projectUniqueName": "D:\\GBMPMod\\MultiplayerBox\\VSProjects\\MultiplayerBox Client\\MultiplayerBox Client.csproj",
       "projectName": "MultiplayerBox Client",
-      "projectPath": "D:\\Projects\\C#\\MultiplayerBox Client\\MultiplayerBox Client.csproj",
-      "packagesPath": "C:\\Users\\vabish\\.nuget\\packages\\",
-      "outputPath": "D:\\Projects\\C#\\MultiplayerBox Client\\obj\\",
+      "projectPath": "D:\\GBMPMod\\MultiplayerBox\\VSProjects\\MultiplayerBox Client\\MultiplayerBox Client.csproj",
+      "packagesPath": "C:\\Users\\kakao\\.nuget\\packages\\",
+      "outputPath": "D:\\GBMPMod\\MultiplayerBox\\VSProjects\\MultiplayerBox Client\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "D:\\Applications\\Utility\\Visual Studio\\Shared\\NuGetPackages"
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\vabish\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\kakao\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -139,14 +68,19 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net10.0": {
-          "framework": "net10.0",
           "targetAlias": "net10.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "D:\\GBMPMod\\MultiplayerBox\\VSProjects\\GoreBoxRegistryLinker\\GoreBoxRegistryLinker.csproj": {
+              "projectPath": "D:\\GBMPMod\\MultiplayerBox\\VSProjects\\GoreBoxRegistryLinker\\GoreBoxRegistryLinker.csproj"
+            },
+            "D:\\GBMPMod\\MultiplayerBox\\VSProjects\\NetLiblary\\NetLiblary.csproj": {
+              "projectPath": "D:\\GBMPMod\\MultiplayerBox\\VSProjects\\NetLiblary\\NetLiblary.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
@@ -163,14 +97,7 @@
     },
     "frameworks": {
       "net10.0": {
-        "framework": "net10.0",
         "targetAlias": "net10.0",
-        "dependencies": {
-          "System.Management": {
-            "target": "Package",
-            "version": "[10.0.7, )"
-          }
-        },
         "imports": [
           "net461",
           "net462",
@@ -187,7 +114,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.202/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",

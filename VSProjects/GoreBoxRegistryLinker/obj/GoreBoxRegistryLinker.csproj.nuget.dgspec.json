@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Projects\\C#\\GoreBoxRegistryLinker\\GoreBoxRegistryLinker.csproj": {}
+    "D:\\GBMPMod\\MultiplayerBox\\VSProjects\\GoreBoxRegistryLinker\\GoreBoxRegistryLinker.csproj": {}
   },
   "projects": {
-    "D:\\Projects\\C#\\GoreBoxRegistryLinker\\GoreBoxRegistryLinker.csproj": {
+    "D:\\GBMPMod\\MultiplayerBox\\VSProjects\\GoreBoxRegistryLinker\\GoreBoxRegistryLinker.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Projects\\C#\\GoreBoxRegistryLinker\\GoreBoxRegistryLinker.csproj",
+        "projectUniqueName": "D:\\GBMPMod\\MultiplayerBox\\VSProjects\\GoreBoxRegistryLinker\\GoreBoxRegistryLinker.csproj",
         "projectName": "GoreBoxRegistryLinker",
-        "projectPath": "D:\\Projects\\C#\\GoreBoxRegistryLinker\\GoreBoxRegistryLinker.csproj",
-        "packagesPath": "C:\\Users\\vabish\\.nuget\\packages\\",
-        "outputPath": "D:\\Projects\\C#\\GoreBoxRegistryLinker\\obj\\",
+        "projectPath": "D:\\GBMPMod\\MultiplayerBox\\VSProjects\\GoreBoxRegistryLinker\\GoreBoxRegistryLinker.csproj",
+        "packagesPath": "C:\\Users\\kakao\\.nuget\\packages\\",
+        "outputPath": "D:\\GBMPMod\\MultiplayerBox\\VSProjects\\GoreBoxRegistryLinker\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "D:\\Applications\\Utility\\Visual Studio\\Shared\\NuGetPackages"
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\vabish\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\kakao\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,7 +26,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -68,7 +67,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.202/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",

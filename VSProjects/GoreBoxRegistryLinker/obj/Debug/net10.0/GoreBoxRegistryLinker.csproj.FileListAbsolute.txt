@@ -9,3 +9,15 @@ D:\Projects\C#\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.dll
 D:\Projects\C#\GoreBoxRegistryLinker\obj\Debug\net10.0\refint\GoreBoxRegistryLinker.dll
 D:\Projects\C#\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.pdb
 D:\Projects\C#\GoreBoxRegistryLinker\obj\Debug\net10.0\ref\GoreBoxRegistryLinker.dll
+D:\GBMPMod\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\bin\Debug\net10.0\GoreBoxRegistryLinker.deps.json
+D:\GBMPMod\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\bin\Debug\net10.0\GoreBoxRegistryLinker.dll
+D:\GBMPMod\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\bin\Debug\net10.0\GoreBoxRegistryLinker.pdb
+D:\GBMPMod\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.GeneratedMSBuildEditorConfig.editorconfig
+D:\GBMPMod\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.AssemblyInfoInputs.cache
+D:\GBMPMod\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.AssemblyInfo.cs
+D:\GBMPMod\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.csproj.CoreCompileInputs.cache
+D:\GBMPMod\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.sourcelink.json
+D:\GBMPMod\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.dll
+D:\GBMPMod\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\obj\Debug\net10.0\refint\GoreBoxRegistryLinker.dll
+D:\GBMPMod\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.pdb
+D:\GBMPMod\MultiplayerBox\VSProjects\GoreBoxRegistryLinker\obj\Debug\net10.0\ref\GoreBoxRegistryLinker.dll

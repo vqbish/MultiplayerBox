@@ -21,3 +21,24 @@ D:\Projects\C#\MultiplayerBox Client\bin\Debug\net10.0\NetLiblary.dll
 D:\Projects\C#\MultiplayerBox Client\bin\Debug\net10.0\NetLiblary.pdb
 D:\Projects\C#\MultiplayerBox Client\bin\Debug\net10.0\GoreBoxRegistryLinker.dll
 D:\Projects\C#\MultiplayerBox Client\bin\Debug\net10.0\GoreBoxRegistryLinker.pdb
+D:\GBMPMod\MultiplayerBox\VSProjects\MultiplayerBox Client\bin\Debug\net10.0\MultiplayerBox Client.exe
+D:\GBMPMod\MultiplayerBox\VSProjects\MultiplayerBox Client\bin\Debug\net10.0\MultiplayerBox Client.deps.json
+D:\GBMPMod\MultiplayerBox\VSProjects\MultiplayerBox Client\bin\Debug\net10.0\MultiplayerBox Client.runtimeconfig.json
+D:\GBMPMod\MultiplayerBox\VSProjects\MultiplayerBox Client\bin\Debug\net10.0\MultiplayerBox Client.dll
+D:\GBMPMod\MultiplayerBox\VSProjects\MultiplayerBox Client\bin\Debug\net10.0\MultiplayerBox Client.pdb
+D:\GBMPMod\MultiplayerBox\VSProjects\MultiplayerBox Client\bin\Debug\net10.0\GoreBoxRegistryLinker.dll
+D:\GBMPMod\MultiplayerBox\VSProjects\MultiplayerBox Client\bin\Debug\net10.0\NetLiblary.dll
+D:\GBMPMod\MultiplayerBox\VSProjects\MultiplayerBox Client\bin\Debug\net10.0\GoreBoxRegistryLinker.pdb
+D:\GBMPMod\MultiplayerBox\VSProjects\MultiplayerBox Client\bin\Debug\net10.0\NetLiblary.pdb
+D:\GBMPMod\MultiplayerBox\VSProjects\MultiplayerBox Client\obj\Debug\net10.0\MultiplayerBox Client.csproj.AssemblyReference.cache
+D:\GBMPMod\MultiplayerBox\VSProjects\MultiplayerBox Client\obj\Debug\net10.0\MultiplayerBox Client.GeneratedMSBuildEditorConfig.editorconfig
+D:\GBMPMod\MultiplayerBox\VSProjects\MultiplayerBox Client\obj\Debug\net10.0\MultiplayerBox Client.AssemblyInfoInputs.cache
+D:\GBMPMod\MultiplayerBox\VSProjects\MultiplayerBox Client\obj\Debug\net10.0\MultiplayerBox Client.AssemblyInfo.cs
+D:\GBMPMod\MultiplayerBox\VSProjects\MultiplayerBox Client\obj\Debug\net10.0\MultiplayerBox Client.csproj.CoreCompileInputs.cache
+D:\GBMPMod\MultiplayerBox\VSProjects\MultiplayerBox Client\obj\Debug\net10.0\MultiplayerBox Client.sourcelink.json
+D:\GBMPMod\MultiplayerBox\VSProjects\MultiplayerBox Client\obj\Debug\net10.0\Multipla.CE206A30.Up2Date
+D:\GBMPMod\MultiplayerBox\VSProjects\MultiplayerBox Client\obj\Debug\net10.0\MultiplayerBox Client.dll
+D:\GBMPMod\MultiplayerBox\VSProjects\MultiplayerBox Client\obj\Debug\net10.0\refint\MultiplayerBox Client.dll
+D:\GBMPMod\MultiplayerBox\VSProjects\MultiplayerBox Client\obj\Debug\net10.0\MultiplayerBox Client.pdb
+D:\GBMPMod\MultiplayerBox\VSProjects\MultiplayerBox Client\obj\Debug\net10.0\MultiplayerBox Client.genruntimeconfig.cache
+D:\GBMPMod\MultiplayerBox\VSProjects\MultiplayerBox Client\obj\Debug\net10.0\ref\MultiplayerBox Client.dll
