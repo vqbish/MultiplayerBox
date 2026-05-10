@@ -12,7 +12,7 @@ function ChatMaster.OnChatMessage(message, sender)
     }
     NetworkManager.Send(data)
 
-    Debug.Log("Original: " .. message .. ", encoded: " .. Base64.decode(data.Message))
+    Debug.Log("Original: " .. message .. ", encoded: " .. Base64.decode(data.Message) .. ", coded: " .. data.Message)
 end
 
 function ChatMaster.OnNetworkData(data)

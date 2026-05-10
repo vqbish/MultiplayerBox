@@ -1,146 +1,136 @@
 local base64 = {}
 
-local function extract(v, from, width)
-	return math.floor(v / 2^from) % 2^width
+local SEP = "|"
+
+local function cp_to_utf8(cp)
+	if cp <= 0x7F then
+		return string.char(cp)
+	elseif cp <= 0x7FF then
+		local b1 = 0xC0 + math.floor(cp / 0x40)
+		local b2 = 0x80 + (cp % 0x40)
+		return string.char(b1, b2)
+	elseif cp <= 0xFFFF then
+		local b1 = 0xE0 + math.floor(cp / 0x1000)
+		local b2 = 0x80 + (math.floor(cp / 0x40) % 0x40)
+		local b3 = 0x80 + (cp % 0x40)
+		return string.char(b1, b2, b3)
+	elseif cp <= 0x10FFFF then
+		local b1 = 0xF0 + math.floor(cp / 0x40000)
+		local b2 = 0x80 + (math.floor(cp / 0x1000) % 0x40)
+		local b3 = 0x80 + (math.floor(cp / 0x40) % 0x40)
+		local b4 = 0x80 + (cp % 0x40)
+		return string.char(b1, b2, b3, b4)
+	end
+	return "?"
 end
 
-function base64.makeencoder(s62, s63, spad)
-	local encoder = {}
-	local alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789" .. (s62 or "-") .. (s63 or "_") .. (spad or "=")
-	for i = 1, #alphabet do
-		encoder[i - 1] = string.byte(alphabet, i)
+local function utf8_next_codepoint(s, i)
+	local b1 = string.byte(s, i)
+	if not b1 then
+		return nil, i
 	end
-	return encoder
+
+	if b1 < 0x80 then
+		return b1, i + 1
+	end
+
+	if b1 < 0xE0 then
+		local b2 = string.byte(s, i + 1)
+		if not b2 then return 0xFFFD, i + 1 end
+		local cp = (b1 - 0xC0) * 0x40 + (b2 - 0x80)
+		return cp, i + 2
+	end
+
+	if b1 < 0xF0 then
+		local b2 = string.byte(s, i + 1)
+		local b3 = string.byte(s, i + 2)
+		if not b2 or not b3 then return 0xFFFD, i + 1 end
+		local cp = (b1 - 0xE0) * 0x1000 + (b2 - 0x80) * 0x40 + (b3 - 0x80)
+		return cp, i + 3
+	end
+
+	local b2 = string.byte(s, i + 1)
+	local b3 = string.byte(s, i + 2)
+	local b4 = string.byte(s, i + 3)
+	if not b2 or not b3 or not b4 then return 0xFFFD, i + 1 end
+	local cp = (b1 - 0xF0) * 0x40000 + (b2 - 0x80) * 0x1000 + (b3 - 0x80) * 0x40 + (b4 - 0x80)
+	return cp, i + 4
 end
 
-function base64.makedecoder(s62, s63, spad)
-	local decoder = {}
-	local encoder = base64.makeencoder(s62, s63, spad)
-	for b64code, charcode in tableIterators.pairs(encoder) do
-		decoder[charcode] = b64code
-	end
-	return decoder
+local lower_cps = {
+	0x0430, 0x0431, 0x0432, 0x0433, 0x0434, 0x0435, 0x0451, 0x0436, 0x0437, 0x0438,
+	0x0439, 0x043A, 0x043B, 0x043C, 0x043D, 0x043E, 0x043F, 0x0440, 0x0441, 0x0442,
+	0x0443, 0x0444, 0x0445, 0x0446, 0x0447, 0x0448, 0x0449, 0x044A, 0x044B, 0x044C,
+	0x044D, 0x044E, 0x044F
+}
+
+local upper_cps = {
+	0x0410, 0x0411, 0x0412, 0x0413, 0x0414, 0x0415, 0x0401, 0x0416, 0x0417, 0x0418,
+	0x0419, 0x041A, 0x041B, 0x041C, 0x041D, 0x041E, 0x041F, 0x0420, 0x0421, 0x0422,
+	0x0423, 0x0424, 0x0425, 0x0426, 0x0427, 0x0428, 0x0429, 0x042A, 0x042B, 0x042C,
+	0x042D, 0x042E, 0x042F
+}
+
+local encode_map = {}
+local decode_map = {}
+
+for i, cp in tableIterators.ipairs(lower_cps) do
+	local tag = string.format("r%02d", i)
+	encode_map[cp] = tag
+	decode_map[tag] = cp
 end
 
-local DEFAULT_ENCODER = base64.makeencoder()
-local DEFAULT_DECODER = base64.makedecoder()
-
-local char, concat = string.char, table.concat
-
-function base64.encode(str, encoder, usecaching)
-	encoder = encoder or DEFAULT_ENCODER
-	local t, k, n = {}, 1, #str
-	local lastn = n % 3
-	local cache = {}
-
-	for i = 1, n - lastn, 3 do
-		local a, b, c = string.byte(str, i, i + 2)
-		local v = a * 0x10000 + b * 0x100 + c
-		local s
-
-		if usecaching then
-			s = cache[v]
-			if not s then
-				s = char(
-					encoder[extract(v, 18, 6)],
-					encoder[extract(v, 12, 6)],
-					encoder[extract(v, 6, 6)],
-					encoder[extract(v, 0, 6)]
-				)
-				cache[v] = s
-			end
-		else
-			s = char(
-				encoder[extract(v, 18, 6)],
-				encoder[extract(v, 12, 6)],
-				encoder[extract(v, 6, 6)],
-				encoder[extract(v, 0, 6)]
-			)
-		end
-
-		t[k] = s
-		k = k + 1
-	end
-
-	if lastn == 2 then
-		local a, b = string.byte(str, n - 1, n)
-		local v = a * 0x10000 + b * 0x100
-		t[k] = char(encoder[extract(v, 18, 6)], encoder[extract(v, 12, 6)], encoder[extract(v, 6, 6)], encoder[64])
-	elseif lastn == 1 then
-		local v = string.byte(str, n) * 0x10000
-		t[k] = char(encoder[extract(v, 18, 6)], encoder[extract(v, 12, 6)], encoder[64], encoder[64])
-	end
-
-	return concat(t)
+for i, cp in tableIterators.ipairs(upper_cps) do
+	local tag = string.format("R%02d", i)
+	encode_map[cp] = tag
+	decode_map[tag] = cp
 end
 
-function base64.decode(b64, decoder, usecaching)
-	decoder = decoder or DEFAULT_DECODER
+function base64.encode(str)
+	local out = {}
+	local k = 1
+	local i = 1
 
-	local s62, s63
-	for charcode, b64code in tableIterators.pairs(decoder) do
-		if b64code == 62 then
-			s62 = charcode
-		elseif b64code == 63 then
-			s63 = charcode
-		end
-	end
-
-	local pattern = '[^%w%+%/%=]'
-	if s62 and s63 then
-		pattern = string.format('[^%%w%%%s%%%s%%=]', char(s62), char(s63))
-	end
-
-	b64 = string.gsub(b64, pattern, '')
-	local cache = usecaching and {}
-	local t, k = {}, 1
-	local n = #b64
-	local padding = string.sub(b64, -2) == '==' and 2 or string.sub(b64, -1) == '=' and 1 or 0
-
-	local function dv(x)
-		return decoder[x] or 0
-	end
-
-	for i = 1, padding > 0 and n - 4 or n, 4 do
-		local a, b, c, d = string.byte(b64, i, i + 3)
-		if not a or not b then
+	while i <= #str do
+		local cp, next_i = utf8_next_codepoint(str, i)
+		if not cp then
 			break
 		end
 
-		local s
-
-		if usecaching then
-			local v0 = a * 0x1000000 + (b or 0) * 0x10000 + (c or 0) * 0x100 + (d or 0)
-			s = cache[v0]
-			if not s then
-				local v = dv(a) * 0x40000 + dv(b) * 0x1000 + dv(c) * 0x40 + dv(d)
-				s = char(extract(v, 16, 8), extract(v, 8, 8), extract(v, 0, 8))
-				cache[v0] = s
-			end
+		local tag = encode_map[cp]
+		if tag then
+			out[k] = tag
 		else
-			local v = dv(a) * 0x40000 + dv(b) * 0x1000 + dv(c) * 0x40 + dv(d)
-			s = char(extract(v, 16, 8), extract(v, 8, 8), extract(v, 0, 8))
+			out[k] = "u" .. string.format("%X", cp)
 		end
 
-		t[k] = s
+		k = k + 1
+		i = next_i
+	end
+
+	return table.concat(out, SEP)
+end
+
+function base64.decode(data)
+	local out = {}
+	local k = 1
+
+	for token in string.gmatch(data, "[^" .. SEP .. "]+") do
+		local cp = decode_map[token]
+		if cp then
+			out[k] = cp_to_utf8(cp)
+		else
+			local hex = string.match(token, "^u([%x]+)$")
+			if hex then
+				out[k] = cp_to_utf8(basicModule.tonumber(hex, 16))
+			else
+				out[k] = token
+			end
+		end
 		k = k + 1
 	end
 
-	if padding == 1 then
-		local a, b, c = string.byte(b64, n - 3, n - 1)
-		if a and b and c then
-			local v = dv(a) * 0x40000 + dv(b) * 0x1000 + dv(c) * 0x40
-			t[k] = char(extract(v, 16, 8), extract(v, 8, 8))
-		end
-	elseif padding == 2 then
-		local a, b = string.byte(b64, n - 3, n - 2)
-		if a and b then
-			local v = dv(a) * 0x40000 + dv(b) * 0x1000
-			t[k] = char(extract(v, 16, 8))
-		end
-	end
-
-	return concat(t)
+	return table.concat(out)
 end
 
 return base64
