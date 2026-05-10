@@ -26,9 +26,9 @@ function NetworkManager.RemoveOnGetListener(func)
 end
 
 function NetworkManager.Update()
-    local curprefs = File.GetPlayerPrefsStr(NetworkManager.PrefsKey, nil)
+    local curprefs = File.GetPlayerPrefsStr(NetworkManager.PrefsKey, "<NULLARGUMENTEXTEPTION>")
     
-    if curprefs ~= nil and curprefs ~= NetworkManager.prevprefs then
+    if curprefs ~= "<NULLARGUMENTEXTEPTION>" and curprefs ~= NetworkManager.prevprefs then
         NetworkManager.prevprefs = curprefs
         local status, tableData = errorHandling.pcall(json.parse, NetworkManager.prevprefs)
         
