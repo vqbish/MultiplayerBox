@@ -50,6 +50,7 @@ function ChatGUI.OnNetworkData(data)
     if basicModule.type(data) ~= "table" then
         return
     end
+    Logger.Log("message: " .. json.serialize(data))
 
     local packetType = data.Type or data.type
 
