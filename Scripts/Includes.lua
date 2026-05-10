@@ -18,6 +18,8 @@ function Includes.Include(name)
                 Debug.Log("Loaded: " .. path)
             end
         end
+        else
+            Debug.Log("Includes failed: files with name " .. name .. " not found!")
     end
 
     return lib

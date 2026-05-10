@@ -1,136 +1,189 @@
 local base64 = {}
 
-local SEP = "|"
+local char = string.char
+local byte = string.byte
+local concat = table.concat
+local insert = table.insert
 
-local function cp_to_utf8(cp)
-	if cp <= 0x7F then
-		return string.char(cp)
-	elseif cp <= 0x7FF then
-		local b1 = 0xC0 + math.floor(cp / 0x40)
-		local b2 = 0x80 + (cp % 0x40)
-		return string.char(b1, b2)
-	elseif cp <= 0xFFFF then
-		local b1 = 0xE0 + math.floor(cp / 0x1000)
-		local b2 = 0x80 + (math.floor(cp / 0x40) % 0x40)
-		local b3 = 0x80 + (cp % 0x40)
-		return string.char(b1, b2, b3)
-	elseif cp <= 0x10FFFF then
-		local b1 = 0xF0 + math.floor(cp / 0x40000)
-		local b2 = 0x80 + (math.floor(cp / 0x1000) % 0x40)
-		local b3 = 0x80 + (math.floor(cp / 0x40) % 0x40)
-		local b4 = 0x80 + (cp % 0x40)
-		return string.char(b1, b2, b3, b4)
+function base64.makeencoder(s62, s63, spad)
+	local encoder = {}
+
+	local chars = {
+		[0]='A','B','C','D','E','F','G','H','I','J',
+		'K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y',
+		'Z','a','b','c','d','e','f','g','h','i','j','k','l','m','n',
+		'o','p','q','r','s','t','u','v','w','x','y','z',
+		'0','1','2','3','4','5','6','7','8','9',
+		s62 or '+',
+		s63 or '/',
+		spad or '='
+	}
+
+	for i, v in tableIterators.pairs(chars) do
+		encoder[i] = v
 	end
-	return "?"
+
+	return encoder
 end
 
-local function utf8_next_codepoint(s, i)
-	local b1 = string.byte(s, i)
-	if not b1 then
-		return nil, i
+function base64.makedecoder(s62, s63, spad)
+	local decoder = {}
+	local encoder = base64.makeencoder(s62, s63, spad)
+
+	for i, v in tableIterators.pairs(encoder) do
+		decoder[v] = i
 	end
 
-	if b1 < 0x80 then
-		return b1, i + 1
-	end
-
-	if b1 < 0xE0 then
-		local b2 = string.byte(s, i + 1)
-		if not b2 then return 0xFFFD, i + 1 end
-		local cp = (b1 - 0xC0) * 0x40 + (b2 - 0x80)
-		return cp, i + 2
-	end
-
-	if b1 < 0xF0 then
-		local b2 = string.byte(s, i + 1)
-		local b3 = string.byte(s, i + 2)
-		if not b2 or not b3 then return 0xFFFD, i + 1 end
-		local cp = (b1 - 0xE0) * 0x1000 + (b2 - 0x80) * 0x40 + (b3 - 0x80)
-		return cp, i + 3
-	end
-
-	local b2 = string.byte(s, i + 1)
-	local b3 = string.byte(s, i + 2)
-	local b4 = string.byte(s, i + 3)
-	if not b2 or not b3 or not b4 then return 0xFFFD, i + 1 end
-	local cp = (b1 - 0xF0) * 0x40000 + (b2 - 0x80) * 0x1000 + (b3 - 0x80) * 0x40 + (b4 - 0x80)
-	return cp, i + 4
+	return decoder
 end
 
-local lower_cps = {
-	0x0430, 0x0431, 0x0432, 0x0433, 0x0434, 0x0435, 0x0451, 0x0436, 0x0437, 0x0438,
-	0x0439, 0x043A, 0x043B, 0x043C, 0x043D, 0x043E, 0x043F, 0x0440, 0x0441, 0x0442,
-	0x0443, 0x0444, 0x0445, 0x0446, 0x0447, 0x0448, 0x0449, 0x044A, 0x044B, 0x044C,
-	0x044D, 0x044E, 0x044F
-}
+local DEFAULT_ENCODER = base64.makeencoder()
+local DEFAULT_DECODER = base64.makedecoder()
 
-local upper_cps = {
-	0x0410, 0x0411, 0x0412, 0x0413, 0x0414, 0x0415, 0x0401, 0x0416, 0x0417, 0x0418,
-	0x0419, 0x041A, 0x041B, 0x041C, 0x041D, 0x041E, 0x041F, 0x0420, 0x0421, 0x0422,
-	0x0423, 0x0424, 0x0425, 0x0426, 0x0427, 0x0428, 0x0429, 0x042A, 0x042B, 0x042C,
-	0x042D, 0x042E, 0x042F
-}
+local function utf8_to_bytes(str)
+    local bytes = {}
+    local length = string.len(str)
 
-local encode_map = {}
-local decode_map = {}
+    for i = 1, length do
+        local code = string.byte(str, i)
 
-for i, cp in tableIterators.ipairs(lower_cps) do
-	local tag = string.format("r%02d", i)
-	encode_map[cp] = tag
-	decode_map[tag] = cp
+        if code < 0x80 then
+            insert(bytes, code)
+        elseif code < 0x800 then
+            insert(bytes, 0xC0 + math.floor(code / 0x40))
+            insert(bytes, 0x80 + (code % 0x40))
+        elseif code < 0x10000 then
+            insert(bytes, 0xE0 + math.floor(code / 0x1000))
+            insert(bytes, 0x80 + (math.floor(code / 0x40) % 0x40))
+            insert(bytes, 0x80 + (code % 0x40))
+        else
+            insert(bytes, 0xF0 + math.floor(code / 0x40000))
+            insert(bytes, 0x80 + (math.floor(code / 0x1000) % 0x40))
+            insert(bytes, 0x80 + (math.floor(code / 0x40) % 0x40))
+            insert(bytes, 0x80 + (code % 0x40))
+        end
+    end
+    return bytes
 end
 
-for i, cp in tableIterators.ipairs(upper_cps) do
-	local tag = string.format("R%02d", i)
-	encode_map[cp] = tag
-	decode_map[tag] = cp
+-- BYTE ARRAY -> RAW STRING
+local function bytes_to_string(bytes)
+    local res = {}
+    local i = 1
+    while i <= #bytes do
+        local b1 = bytes[i]
+        local code
+        
+        if b1 < 0x80 then
+            code = b1
+            i = i + 1
+        elseif b1 < 0xE0 then
+            local b2 = bytes[i + 1]
+            code = ((b1 % 0x20) * 0x40) + (b2 % 0x40)
+            i = i + 2
+        elseif b1 < 0xF0 then
+            local b2 = bytes[i + 1]
+            local b3 = bytes[i + 2]
+            code = ((b1 % 0x10) * 0x1000) + ((b2 % 0x40) * 0x40) + (b3 % 0x40)
+            i = i + 3
+        else
+            local b2 = bytes[i + 1]
+            local b3 = bytes[i + 2]
+            local b4 = bytes[i + 3]
+            code = ((b1 % 0x08) * 0x40000) + ((b2 % 0x40) * 0x1000) + ((b3 % 0x40) * 0x40) + (b4 % 0x40)
+            i = i + 4
+        end
+        table.insert(res, char(code))
+    end
+    return table.concat(res)
 end
 
-function base64.encode(str)
-	local out = {}
-	local k = 1
-	local i = 1
+function base64.encode(str, encoder)
+	encoder = encoder or DEFAULT_ENCODER
 
-	while i <= #str do
-		local cp, next_i = utf8_next_codepoint(str, i)
-		if not cp then
-			break
-		end
+	local bytes = utf8_to_bytes(str)
 
-		local tag = encode_map[cp]
-		if tag then
-			out[k] = tag
-		else
-			out[k] = "u" .. string.format("%X", cp)
-		end
-
-		k = k + 1
-		i = next_i
-	end
-
-	return table.concat(out, SEP)
-end
-
-function base64.decode(data)
-	local out = {}
+	local t = {}
 	local k = 1
 
-	for token in string.gmatch(data, "[^" .. SEP .. "]+") do
-		local cp = decode_map[token]
-		if cp then
-			out[k] = cp_to_utf8(cp)
-		else
-			local hex = string.match(token, "^u([%x]+)$")
-			if hex then
-				out[k] = cp_to_utf8(basicModule.tonumber(hex, 16))
-			else
-				out[k] = token
-			end
-		end
+	local n = #bytes
+	local lastn = n % 3
+
+	for i = 1, n - lastn, 3 do
+		local a = bytes[i]
+		local b = bytes[i + 1]
+		local c = bytes[i + 2]
+
+		local v =
+			a * 0x10000 +
+			b * 0x100 +
+			c
+
+		t[k] =
+			encoder[bit32.extract(v, 18, 6)] ..
+			encoder[bit32.extract(v, 12, 6)] ..
+			encoder[bit32.extract(v, 6, 6)] ..
+			encoder[bit32.extract(v, 0, 6)]
+
 		k = k + 1
 	end
 
-	return table.concat(out)
+	if lastn == 2 then
+		local a = bytes[n - 1]
+		local b = bytes[n]
+
+		local v =
+			a * 0x10000 +
+			b * 0x100
+
+		t[k] =
+			encoder[bit32.extract(v, 18, 6)] ..
+			encoder[bit32.extract(v, 12, 6)] ..
+			encoder[bit32.extract(v, 6, 6)] ..
+			encoder[64]
+
+	elseif lastn == 1 then
+		local v = bytes[n] * 0x10000
+
+		t[k] =
+			encoder[bit32.extract(v, 18, 6)] ..
+			encoder[bit32.extract(v, 12, 6)] ..
+			encoder[64] ..
+			encoder[64]
+	end
+
+	return concat(t)
+end
+
+function base64.decode(b64, decoder)
+    decoder = decoder or DEFAULT_DECODER
+    b64 = string.gsub(b64, '[^%w%+%/%=]', '')
+
+    local bytes = {}
+    local n = #b64
+    local padding = string.sub(b64, -2) == '==' and 2 or string.sub(b64, -1) == '=' and 1 or 0
+
+    for i = 1, padding > 0 and n - 4 or n, 4 do
+        local a, b, c, d = string.sub(b64, i, i), string.sub(b64, i+1, i+1), string.sub(b64, i+2, i+2), string.sub(b64, i+3, i+3)
+        local v = decoder[a] * 0x40000 + decoder[b] * 0x1000 + decoder[c] * 0x40 + decoder[d]
+        
+        table.insert(bytes, bit32.extract(v, 16, 8))
+        table.insert(bytes, bit32.extract(v, 8, 8))
+        table.insert(bytes, bit32.extract(v, 0, 8))
+    end
+
+    if padding == 1 then
+        local a, b, c = string.sub(b64, n-3, n-3), string.sub(b64, n-2, n-2), string.sub(b64, n-1, n-1)
+        local v = decoder[a] * 0x40000 + decoder[b] * 0x1000 + decoder[c] * 0x40
+        table.insert(bytes, bit32.extract(v, 16, 8))
+        table.insert(bytes, bit32.extract(v, 8, 8))
+    elseif padding == 2 then
+        local a, b = string.sub(b64, n-3, n-3), string.sub(b64, n-2, n-2)
+        local v = decoder[a] * 0x40000 + decoder[b] * 0x1000
+        table.insert(bytes, bit32.extract(v, 16, 8))
+    end
+
+    return bytes_to_string(bytes)
 end
 
 return base64

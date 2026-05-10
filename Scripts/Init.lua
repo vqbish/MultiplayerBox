@@ -41,6 +41,7 @@ if #found <= 0 then
         return
     end
 end
+Debug.Log("Found Includes.lua")
 Includes = File.DoFile(found[#found])
 
 function Update()
