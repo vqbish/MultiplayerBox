@@ -43,6 +43,7 @@ function NetworkManager.Update()
         Logger.Log("Network packet json parse failed. Message: " .. currentPrefs, LogTypes.Warning)
         return
     end
+    Logger.Log(currentPrefs, LogTypes.Log)
 
     if packet.from == "MOD" then
         return

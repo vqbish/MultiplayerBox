@@ -1,15 +1,14 @@
 local ChatMaster = {}
 
 function ChatMaster.OnChatMessage(message, sender)
-    local message = ChatGUI.Trim(message)
-
     if message == "" then
         return
     end
 
     NetworkManager.Send({
         Type = "chatMessage",
-        Message = message
+        Message = Base64.encode(message, nil, false),
+        SenderNickname = Base64.encode(sender.GetName(), nil, false)
     })
 end
 
@@ -25,8 +24,8 @@ function ChatMaster.OnNetworkData(data)
         return
     end
 
-    local sender = data.Sender or data.sender or "Peer"
-    local message = data.Message or data.message or ""
+    local sender = Base64.decode(data.SenderNickname, nil, false)
+    local message = Base64.decode(data.Message, nil, false)
 
     Server.SendChatMessage("<color=red>" .. sender .. "</color>: " .. message)
 end

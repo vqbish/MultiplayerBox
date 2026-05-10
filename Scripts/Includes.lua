@@ -23,6 +23,7 @@ function Includes.Include(name)
     return lib
 end
 
+Base64 = Includes.Include("base64.lua")
 Logger = Includes.Include("Logger.lua")
 LogTypes = Includes.Include("LogTypes.lua")
 StringResolvers = Includes.Include("StringResolvers.lua")

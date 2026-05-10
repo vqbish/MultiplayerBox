@@ -14,24 +14,30 @@ end
 
 function StringResolvers.TransferStringToType(value)
     if basicModule.type(value) ~= "string" then return value end
-    
+
     if value == "nil" then return nil end
     if value == "true" then return true end
     if value == "false" then return false end
-    
+
     local num = basicModule.tonumber(value)
-    if num then return num end
-    
+    if num and tostring(num) == value then
+        return num
+    end
+
     local status, res = errorHandling.pcall(json.parse, value)
     if status and basicModule.type(res) == "table" then
         return res
     end
-    
+
     local coords = {}
-    for n in string.gmatch(value, "-?%d+%.?%d*") do 
-        coords[#coords + 1] = basicModule.tonumber(n) 
-    end
-    
+    local vectorPattern = "^%s*(-?%d+%.?%d*)%s*,%s*(-?%d+%.?%d*)%s*(,%s*(-?%d+%.?%d*)%s*)?(,%s*(-?%d+%.?%d*)%s*)?$"
+    local a, b, c, d = string.match(value, vectorPattern)
+
+    if a then coords[#coords + 1] = basicModule.tonumber(a) end
+    if b then coords[#coords + 1] = basicModule.tonumber(b) end
+    if c then coords[#coords + 1] = basicModule.tonumber(c) end
+    if d then coords[#coords + 1] = basicModule.tonumber(d) end
+
     if #coords >= 2 and #coords <= 4 then
         local class = _G["Vector" .. #coords]
         if class and class.new then
