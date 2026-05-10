@@ -10,8 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GoreBoxRegistryLinker\GoreBoxRegistryLinker.csproj" />
-    <ProjectReference Include="..\NetLiblary\NetLiblary.csproj" />
+    <Reference Include="GoreBoxRegistryLinker">
+      <HintPath>..\GoreBoxRegistryLinker\bin\Debug\net10.0\GoreBoxRegistryLinker.dll</HintPath>
+    </Reference>
+    <Reference Include="NetLiblary">
+      <HintPath>..\NetLiblary\bin\Debug\net10.0\NetLiblary.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
