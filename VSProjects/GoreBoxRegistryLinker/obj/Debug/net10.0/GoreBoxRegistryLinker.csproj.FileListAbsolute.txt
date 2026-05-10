@@ -1,0 +1,11 @@
+D:\Projects\C#\GoreBoxRegistryLinker\bin\Debug\net10.0\GoreBoxRegistryLinker.deps.json
+D:\Projects\C#\GoreBoxRegistryLinker\bin\Debug\net10.0\GoreBoxRegistryLinker.dll
+D:\Projects\C#\GoreBoxRegistryLinker\bin\Debug\net10.0\GoreBoxRegistryLinker.pdb
+D:\Projects\C#\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projects\C#\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.AssemblyInfoInputs.cache
+D:\Projects\C#\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.AssemblyInfo.cs
+D:\Projects\C#\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.csproj.CoreCompileInputs.cache
+D:\Projects\C#\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.dll
+D:\Projects\C#\GoreBoxRegistryLinker\obj\Debug\net10.0\refint\GoreBoxRegistryLinker.dll
+D:\Projects\C#\GoreBoxRegistryLinker\obj\Debug\net10.0\GoreBoxRegistryLinker.pdb
+D:\Projects\C#\GoreBoxRegistryLinker\obj\Debug\net10.0\ref\GoreBoxRegistryLinker.dll

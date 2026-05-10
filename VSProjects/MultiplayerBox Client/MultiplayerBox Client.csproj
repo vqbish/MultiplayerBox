@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>MultiplayerBox_Client</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Management" Version="10.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="GoreBoxRegistryLinker">
+      <HintPath>..\GoreBoxRegistryLinker\bin\Debug\net10.0\GoreBoxRegistryLinker.dll</HintPath>
+    </Reference>
+    <Reference Include="NetLiblary">
+      <HintPath>..\NetLiblary\bin\Debug\net10.0\NetLiblary.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

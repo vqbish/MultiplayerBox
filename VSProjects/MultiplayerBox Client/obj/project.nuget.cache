@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "t/d0cCs0sRA=",
+  "success": true,
+  "projectFilePath": "D:\\Projects\\C#\\MultiplayerBox Client\\MultiplayerBox Client.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\vabish\\.nuget\\packages\\system.codedom\\10.0.7\\system.codedom.10.0.7.nupkg.sha512",
+    "C:\\Users\\vabish\\.nuget\\packages\\system.management\\10.0.7\\system.management.10.0.7.nupkg.sha512"
+  ],
+  "logs": []
+}

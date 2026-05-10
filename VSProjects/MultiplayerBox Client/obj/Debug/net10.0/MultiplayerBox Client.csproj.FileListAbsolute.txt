@@ -1,0 +1,23 @@
+D:\Projects\C#\MultiplayerBox Client\bin\Debug\net10.0\MultiplayerBox Client.exe
+D:\Projects\C#\MultiplayerBox Client\bin\Debug\net10.0\MultiplayerBox Client.deps.json
+D:\Projects\C#\MultiplayerBox Client\bin\Debug\net10.0\MultiplayerBox Client.runtimeconfig.json
+D:\Projects\C#\MultiplayerBox Client\bin\Debug\net10.0\MultiplayerBox Client.dll
+D:\Projects\C#\MultiplayerBox Client\bin\Debug\net10.0\MultiplayerBox Client.pdb
+D:\Projects\C#\MultiplayerBox Client\bin\Debug\net10.0\System.CodeDom.dll
+D:\Projects\C#\MultiplayerBox Client\bin\Debug\net10.0\System.Management.dll
+D:\Projects\C#\MultiplayerBox Client\bin\Debug\net10.0\runtimes\win\lib\net10.0\System.Management.dll
+D:\Projects\C#\MultiplayerBox Client\obj\Debug\net10.0\MultiplayerBox Client.csproj.AssemblyReference.cache
+D:\Projects\C#\MultiplayerBox Client\obj\Debug\net10.0\MultiplayerBox Client.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projects\C#\MultiplayerBox Client\obj\Debug\net10.0\MultiplayerBox Client.AssemblyInfoInputs.cache
+D:\Projects\C#\MultiplayerBox Client\obj\Debug\net10.0\MultiplayerBox Client.AssemblyInfo.cs
+D:\Projects\C#\MultiplayerBox Client\obj\Debug\net10.0\MultiplayerBox Client.csproj.CoreCompileInputs.cache
+D:\Projects\C#\MultiplayerBox Client\obj\Debug\net10.0\Multipla.CE206A30.Up2Date
+D:\Projects\C#\MultiplayerBox Client\obj\Debug\net10.0\MultiplayerBox Client.dll
+D:\Projects\C#\MultiplayerBox Client\obj\Debug\net10.0\refint\MultiplayerBox Client.dll
+D:\Projects\C#\MultiplayerBox Client\obj\Debug\net10.0\MultiplayerBox Client.pdb
+D:\Projects\C#\MultiplayerBox Client\obj\Debug\net10.0\MultiplayerBox Client.genruntimeconfig.cache
+D:\Projects\C#\MultiplayerBox Client\obj\Debug\net10.0\ref\MultiplayerBox Client.dll
+D:\Projects\C#\MultiplayerBox Client\bin\Debug\net10.0\NetLiblary.dll
+D:\Projects\C#\MultiplayerBox Client\bin\Debug\net10.0\NetLiblary.pdb
+D:\Projects\C#\MultiplayerBox Client\bin\Debug\net10.0\GoreBoxRegistryLinker.dll
+D:\Projects\C#\MultiplayerBox Client\bin\Debug\net10.0\GoreBoxRegistryLinker.pdb

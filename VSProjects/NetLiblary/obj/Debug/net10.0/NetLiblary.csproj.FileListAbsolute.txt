@@ -1,0 +1,11 @@
+D:\Projects\C#\NetLiblary\bin\Debug\net10.0\NetLiblary.deps.json
+D:\Projects\C#\NetLiblary\bin\Debug\net10.0\NetLiblary.dll
+D:\Projects\C#\NetLiblary\bin\Debug\net10.0\NetLiblary.pdb
+D:\Projects\C#\NetLiblary\obj\Debug\net10.0\NetLiblary.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projects\C#\NetLiblary\obj\Debug\net10.0\NetLiblary.AssemblyInfoInputs.cache
+D:\Projects\C#\NetLiblary\obj\Debug\net10.0\NetLiblary.AssemblyInfo.cs
+D:\Projects\C#\NetLiblary\obj\Debug\net10.0\NetLiblary.csproj.CoreCompileInputs.cache
+D:\Projects\C#\NetLiblary\obj\Debug\net10.0\NetLiblary.dll
+D:\Projects\C#\NetLiblary\obj\Debug\net10.0\refint\NetLiblary.dll
+D:\Projects\C#\NetLiblary\obj\Debug\net10.0\NetLiblary.pdb
+D:\Projects\C#\NetLiblary\obj\Debug\net10.0\ref\NetLiblary.dll
