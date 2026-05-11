@@ -21,3 +21,15 @@ D:\GBMPMod\MultiplayerBox\VSProjects\NetLiblary\obj\Debug\net10.0\NetLiblary.dll
 D:\GBMPMod\MultiplayerBox\VSProjects\NetLiblary\obj\Debug\net10.0\refint\NetLiblary.dll
 D:\GBMPMod\MultiplayerBox\VSProjects\NetLiblary\obj\Debug\net10.0\NetLiblary.pdb
 D:\GBMPMod\MultiplayerBox\VSProjects\NetLiblary\obj\Debug\net10.0\ref\NetLiblary.dll
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\NetLiblary\bin\Debug\net10.0\NetLiblary.deps.json
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\NetLiblary\bin\Debug\net10.0\NetLiblary.dll
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\NetLiblary\bin\Debug\net10.0\NetLiblary.pdb
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\NetLiblary\obj\Debug\net10.0\NetLiblary.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\NetLiblary\obj\Debug\net10.0\NetLiblary.AssemblyInfoInputs.cache
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\NetLiblary\obj\Debug\net10.0\NetLiblary.AssemblyInfo.cs
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\NetLiblary\obj\Debug\net10.0\NetLiblary.csproj.CoreCompileInputs.cache
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\NetLiblary\obj\Debug\net10.0\NetLiblary.sourcelink.json
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\NetLiblary\obj\Debug\net10.0\NetLiblary.dll
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\NetLiblary\obj\Debug\net10.0\refint\NetLiblary.dll
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\NetLiblary\obj\Debug\net10.0\NetLiblary.pdb
+C:\Users\vabish\AppData\LocalLow\F2Games\GoreBox\Mods\MultiplayerBox\VSProjects\NetLiblary\obj\Debug\net10.0\ref\NetLiblary.dll

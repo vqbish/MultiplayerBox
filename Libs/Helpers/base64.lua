@@ -15,7 +15,7 @@ function base64.makeencoder(s62, s63, spad)
 		'o','p','q','r','s','t','u','v','w','x','y','z',
 		'0','1','2','3','4','5','6','7','8','9',
 		s62 or '+',
-		s63 or '/',
+		s63 or '-',
 		spad or '='
 	}
 

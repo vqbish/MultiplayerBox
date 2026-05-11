@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NetLiblary")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+64b8a486afd9e79b146d6c40c855b6c296723b7c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3b4d505c55e8e37acbe4a5d611cb9a5d45e9d9e4")]
 [assembly: System.Reflection.AssemblyProductAttribute("NetLiblary")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NetLiblary")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
