@@ -3,7 +3,7 @@ local NetworkManager = {}
 NetworkManager.Listeners = {}
 
 NetworkManager.Endpoint = "custom"
-NetworkManager.LocalBridgeUrl = "http://127.0.0.1:8766/" .. File.GetModName()
+NetworkManager.LocalBridgeUrl = "http://127.0.0.1:8767/"
 NetworkManager.FromId = tostring(Time.GetRealTimeMs())
 
 local handlersRegistered = false

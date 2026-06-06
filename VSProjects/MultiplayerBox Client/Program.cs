@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Runtime.Versioning;
 using GoreBoxModBridgeWeb;
+using System.Diagnostics;
 
 [assembly: SupportedOSPlatform("windows")]
 
@@ -21,7 +22,9 @@ internal static class Program
 
         Shell = new AppShell(Network);
 
-        Bridge = new ModWebBridge(ModName);
+        Bridge = new ModWebBridge(ModName, listenPort: 8767, port: 8765, enableListener: true);
+
+        ConsoleUi.Log("Info", $"Bridge listening: {Bridge.IsListening}", ConsoleColor.Gray);
 
         Bridge.OnResponseSuccess += (path, text) =>
             ConsoleUi.Log("MOD-HTTP", $"[{path}] {text}", ConsoleColor.DarkCyan);
@@ -31,6 +34,7 @@ internal static class Program
 
         Bridge.OnCustomEvent += json =>
         {
+            ConsoleUi.Log("MOD-HTTP", "Received POST from Lua", ConsoleColor.Magenta);
             _ = HandleModMessageAsync(json.Clone());
         };
 
@@ -93,13 +97,15 @@ internal static class Program
             return;
         }
 
+        ConsoleUi.Log("PAYLOAD", payload, ConsoleColor.White);
+
         try
         {
             Network.MarkIncomingPacket();
 
             if (Bridge is not null)
             {
-                await Bridge.SendPostAsync(string.Empty, JsonSerializer.Deserialize<JsonElement>(payload));
+                await Bridge.SendPostAsync("custom", JsonSerializer.Deserialize<JsonElement>(payload));
                 ConsoleUi.Log("NETWORK", $"Packet forwarded to mod from {clientId}", ConsoleColor.Cyan);
             }
             else
@@ -120,7 +126,7 @@ internal static class Program
             return;
         }
 
-        await Bridge.SendPostAsync(string.Empty, new Dictionary<string, string>
+        await Bridge.SendPostAsync("custom", new Dictionary<string, string>
         {
             ["type"] = "PONG",
             ["message"] = "Client is alive"
