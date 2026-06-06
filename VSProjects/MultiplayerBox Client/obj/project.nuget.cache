@@ -1,8 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "pzbDtjIy0s8=",
+  "dgSpecHash": "CC3NO8OjcrI=",
   "success": true,
   "projectFilePath": "C:\\Users\\vabish\\AppData\\LocalLow\\F2Games\\GoreBox\\Mods\\MultiplayerBox\\VSProjects\\MultiplayerBox Client\\MultiplayerBox Client.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\vabish\\.nuget\\packages\\microsoft.net.illink.tasks\\10.0.7\\microsoft.net.illink.tasks.10.0.7.nupkg.sha512",
+    "C:\\Users\\vabish\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\10.0.7\\microsoft.netcore.app.runtime.win-x64.10.0.7.nupkg.sha512",
+    "C:\\Users\\vabish\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\10.0.7\\microsoft.windowsdesktop.app.runtime.win-x64.10.0.7.nupkg.sha512",
+    "C:\\Users\\vabish\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\10.0.7\\microsoft.aspnetcore.app.runtime.win-x64.10.0.7.nupkg.sha512"
+  ],
   "logs": []
 }
