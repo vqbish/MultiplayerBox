@@ -5,7 +5,8 @@ function MainEntry.Start() end
 function MainEntry.OnGUI() end
 function MainEntry.Awake()
     Logger.Log("Hi", LogTypes.Log)
-    NetworkManager.Send({"Hi"}, nil)
+    NetworkManager.Init() 
+    NetworkManager.Send({"ping"}, nil)
 end
 function MainEntry.OnUnload() end
 function MainEntry.FixedUpdate() end
