@@ -57,10 +57,6 @@ local function RegisterWebHandlers()
     Debug.Log("[NetworkManager] Web handlers registered")
 end
 
-WebManager.OnGet:AddListener(function(message)
-    Debug.Log("Getted message from external:" .. message)
-end)
-
 function NetworkManager.AddListener(callback)
     if type(callback) ~= "function" then
         Debug.Log("[NetworkManager] Callback must be a function")

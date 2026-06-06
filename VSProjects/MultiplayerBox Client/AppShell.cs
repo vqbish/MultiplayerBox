@@ -10,7 +10,8 @@ internal sealed class AppShell
         "Главная",
         "Инспектор",
         "Настройки",
-        "Создать/Join"
+        "Создать/Join",
+        "Ping mod"
     };
 
     private int _selectedTab;
@@ -101,6 +102,9 @@ internal sealed class AppShell
                         break;
                     case 3:
                         await OpenConnectionAsync();
+                        break;
+                    case 4:
+                        SendPingToMod();
                         break;
                 }
             }
@@ -284,6 +288,17 @@ internal sealed class AppShell
                 ConsoleUi.Log("INSPECTOR", ex.Message, ConsoleColor.Red);
             }
         }
+    }
+
+    private async Task SendPingToMod()
+    {
+        await Program.Bridge.SendPostAsync("custom", new Dictionary<string, string>
+        {
+            ["type"] = "PING",
+            ["message"] = "Client is alive"
+        });
+
+        return;
     }
 
     private async Task OpenSettingsAsync()

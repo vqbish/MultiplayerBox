@@ -11,7 +11,7 @@ internal static class Program
 {
     private static readonly Network Network = new();
     private static AppShell? Shell;
-    private static ModWebBridge? Bridge;
+    public static ModWebBridge? Bridge { get; private set; }
 
     private const string ModName = "MultiplayerBox";
 

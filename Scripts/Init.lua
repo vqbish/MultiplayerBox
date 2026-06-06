@@ -49,7 +49,11 @@ end
 Debug.Log("Found Includes.lua")
 Includes = File.DoFile(found[#found])
 MainEntry = File.DoFile(FindFilesWithName("MainEntry.lua", GetModFolderName() .. "/Scripts")[1])
-function Awake() MainEntry.Awake() end
+function Awake() MainEntry.Awake()
+        WebManager.OnGet:AddListener(function(message)
+    Debug.Log("Getted message from external:" .. message)
+    end)
+end
 function OnUnload() MainEntry.OnUnload() end
 function FixedUpdate() MainEntry.FixedUpdate() end
 function OnGUI() MainEntry.OnGUI() end
