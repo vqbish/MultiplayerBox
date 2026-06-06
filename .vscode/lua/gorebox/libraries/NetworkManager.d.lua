@@ -1,83 +1,120 @@
 ---@class NetworkManager
 NetworkManager = {}
 
-NetworkManager.PrefsKey = "Handshake"
 NetworkManager.Listeners = {}
 
-function NetworkManager.AddOnGetListener(func)
-    if basicModule.type(func) ~= "function" then
-        Debug.Log("NetworkManager: Попытка добавить слушателя, который не является функцией!")
-        return
+local handlersRegistered = false
+
+local function RegisterWebHandlers()
+    if handlersRegistered then return end
+
+    local function OnPostHandler(path, body)
+        if path ~= NetworkManager.Endpoint then return end
+        if not body or body == "" then return end
+
+        local ok, packet = pcall(json.parse, body)
+        if not ok or type(packet) ~= "table" then
+            Debug.Log("[NetworkManager] Failed to parse incoming POST body")
+            return
+        end
+
+        if packet.from == NetworkManager.FromId then
+            return
+        end
+
+        if type(packet.data) ~= "table" then
+            return
+        end
+
+        for _, listener in ipairs(NetworkManager.Listeners) do
+            local ok, err = pcall(listener, packet.data, packet.time or 0)
+            if not ok then
+                Debug.Log("[NetworkManager] Listener error: " .. tostring(err))
+            end
+        end
     end
-    
-    for _, listener in tableIterators.ipairs(NetworkManager.Listeners) do
-        if listener == func then return end
+
+    local function OnGetHandler(path)
+        if path == "ping" then
+        end
     end
-    
-    table.insert(NetworkManager.Listeners, func)
+
+    WebManager.OnPost:AddListener(OnPostHandler)
+    WebManager.OnGet:AddListener(OnGetHandler)
+
+    handlersRegistered = true
+    Debug.Log("[NetworkManager] Web handlers registered")
 end
 
-function NetworkManager.RemoveOnGetListener(func)
+function NetworkManager.AddListener(callback)
+    if type(callback) ~= "function" then
+        Debug.Log("[NetworkManager] Callback must be a function")
+        return
+    end
+
+    for _, existing in ipairs(NetworkManager.Listeners) do
+        if existing == callback then
+            return
+        end
+    end
+
+    table.insert(NetworkManager.Listeners, callback)
+    Debug.Log("[NetworkManager] Listener added, total: " .. #NetworkManager.Listeners)
+end
+
+function NetworkManager.RemoveListener(callback)
     for i = #NetworkManager.Listeners, 1, -1 do
-        if NetworkManager.Listeners[i] == func then
+        if NetworkManager.Listeners[i] == callback then
             table.remove(NetworkManager.Listeners, i)
         end
     end
 end
 
-function NetworkManager.Update()
-    local curprefs = File.GetPlayerPrefsStr(NetworkManager.PrefsKey, nil)
-    
-    if curprefs ~= nil and curprefs ~= prevprefs then
-        prevprefs = curprefs
-        local status, tableData = errorHandling.pcall(json.parse, prevprefs)
-        
-        if not status then
-            Debug.Log("NetworkManager: Ошибка парсинга JSON")
-            return
-        end
 
-        local argsraw = tableData.data
-        local getTime = tableData.Time
-        local args = {}
-        local counter = 0
-
-        for i, data in tableIterators.pairs(argsraw) do
-            counter = counter + 1
-            data = string.gsub(data, '"', "")
-            args[counter] = StringResolvers.TransferStringToType(data)
-        end
-
-        NetworkManager.OnGet(args, getTime)
-    end
-end
-
-function NetworkManager.OnGet(args, getTime)
-    Debug.Log("get " .. #args .. " objs at " .. getTime)
-    
-    for i = 1, #NetworkManager.Listeners do
-        local listener = NetworkManager.Listeners[i]
-        local ok, err = errorHandling.pcall(listener, args, getTime)
-        if not ok then
-            Debug.Log("NetworkManager: Ошибка в слушателе: " .. basicModule.tostring(err))
-        end
-    end
-end
-
-function NetworkManager.Send(args)
-    local argsforjson = {}
-    for i, data in tableIterators.pairs(args) do
-        argsforjson["args" .. i - 1] = basicModule.tostring(data)
+function NetworkManager.Send(data, callback)
+    if type(data) ~= "table" then
+        Debug.Log("[NetworkManager] Send expects a table")
+        return
     end
 
-    local newTable = {
-        Type = "POST",
-        Time = basicModule.tostring(Time.GetRealTimeMs()),
-        data = argsforjson
+    local packet = {
+        from = NetworkManager.FromId,
+        time = tostring(Time.GetRealTimeMs()),
+        data = data
     }
 
-    local resultJson = json.serialize(newTable)
-    Debug.Log("post " .. resultJson)
-    File.SetPlayerPrefsStr(NetworkManager.PrefsKey, resultJson)
+    local jsonStr = json.serialize(packet)
+    local fullUrl = NetworkManager.ServerUrl .. NetworkManager.Endpoint
+
+    if callback then
+        local function successHandler(path, response)
+            if path == NetworkManager.Endpoint then
+                callback(true, response)
+                WebManager.OnRequestSuccess:RemoveListener(successHandler)
+                WebManager.OnRequestError:RemoveListener(errorHandler)
+            end
+        end
+        local function errorHandler(err)
+            callback(false, err)
+            WebManager.OnRequestSuccess:RemoveListener(successHandler)
+            WebManager.OnRequestError:RemoveListener(errorHandler)
+        end
+        WebManager.OnRequestSuccess:AddListener(successHandler)
+        WebManager.OnRequestError:AddListener(errorHandler)
+    end
+
+    WebManager.SendPost(NetworkManager.Endpoint, jsonStr, "application/json", fullUrl, 5000)
+    Debug.Log("[NetworkManager] Data sent: " .. jsonStr)
+end
+
+function NetworkManager.Init()
+    RegisterWebHandlers()
+    Debug.Log("[NetworkManager] Initialized with localWeb transport")
+end
+
+function NetworkManager.Shutdown()
+    handlersRegistered = false
+    NetworkManager.Listeners = {}
+    Debug.Log("[NetworkManager] Shutdown")
 end
 

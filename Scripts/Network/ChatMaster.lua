@@ -37,8 +37,8 @@ function ChatMaster.OnNetworkData(data)
     local message = Base64.decode(data.Message, nil, false)
 
     Debug.Log("Sender: " .. sender .. ", Message: " .. message)
-    Server.SendChatMessage("<color=red>" .. sender .. "</color>: " .. message)
+    Server.SendChatMessage("<color=red>" .. sender .. "</color>: " .. message, 5)
 end
-NetworkManager.AddOnGetListener(ChatMaster.OnNetworkData)
+NetworkManager.AddListener(ChatMaster.OnNetworkData)
 
 return ChatMaster

@@ -1,6 +1,6 @@
 using System.Text.Json;
 using System.Runtime.Versioning;
-using GoreBoxRegistryLinker;
+using GoreBoxModBridgeWeb;
 
 [assembly: SupportedOSPlatform("windows")]
 
@@ -8,9 +8,11 @@ namespace MultiplayerBoxClient;
 
 internal static class Program
 {
-    private static readonly RegistryMonitor RegistryMonitor = new();
     private static readonly Network Network = new();
     private static AppShell? Shell;
+    private static ModWebBridge? Bridge;
+
+    private const string ModName = "MultiplayerBox";
 
     private static async Task Main()
     {
@@ -19,8 +21,18 @@ internal static class Program
 
         Shell = new AppShell(Network);
 
-        RegistryMonitor.OnLog += message => ConsoleUi.Log("REGISTRY", message, ConsoleColor.DarkGray);
-        RegistryMonitor.OnMessageReceived += message => _ = HandleModMessageAsync(message);
+        Bridge = new ModWebBridge(ModName);
+
+        Bridge.OnResponseSuccess += (path, text) =>
+            ConsoleUi.Log("MOD-HTTP", $"[{path}] {text}", ConsoleColor.DarkCyan);
+
+        Bridge.OnResponseError += (path, error) =>
+            ConsoleUi.Log("MOD-HTTP", $"[{path}] {error}", ConsoleColor.Red);
+
+        Bridge.OnCustomEvent += json =>
+        {
+            _ = HandleModMessageAsync(json.Clone());
+        };
 
         Network.Client.OnConnected += () =>
         {
@@ -34,11 +46,10 @@ internal static class Program
             ConsoleUi.Log("NETWORK", "Disconnected", ConsoleColor.DarkYellow);
         };
 
-        Network.Client.OnError += message => ConsoleUi.Log("NETWORK", message, ConsoleColor.Red);
+        Network.Client.OnError += message =>
+            ConsoleUi.Log("NETWORK", message, ConsoleColor.Red);
+
         Network.Client.OnMessageReceived += HandleNetworkMessage;
-
-        RegistryMonitor.Start(); 
-
 
         try
         {
@@ -46,7 +57,7 @@ internal static class Program
         }
         finally
         {
-            RegistryMonitor.Dispose();
+            Bridge?.Dispose();
             await Network.StopAsync();
             Console.ResetColor();
             Console.Clear();
@@ -54,17 +65,18 @@ internal static class Program
         }
     }
 
-    private static async Task HandleModMessageAsync(string payload)
+    private static async Task HandleModMessageAsync(JsonElement payload)
     {
-        if (IsPacketType(payload, "PING"))
-        {
-            SendPong();
-            return;
-        }
-
         try
         {
-            await Network.Client.SendPayloadAsync(payload);
+            if (IsPacketType(payload, "PING"))
+            {
+                await SendPongAsync();
+                return;
+            }
+
+            var rawJson = payload.GetRawText();
+            await Network.Client.SendPayloadAsync(rawJson);
             Network.MarkOutgoingPacket();
             ConsoleUi.Log("MOD", "Packet sent to room", ConsoleColor.Cyan);
         }
@@ -74,34 +86,54 @@ internal static class Program
         }
     }
 
-    private static void HandleNetworkMessage(string clientId, string payload)
+    private static async void HandleNetworkMessage(string clientId, string payload)
     {
         if (clientId == Network.Client.ClientId)
         {
             return;
         }
 
-        Network.MarkIncomingPacket();
-        RegistryMonitor.SendPayload(payload, clientId);
-        ConsoleUi.Log("NETWORK", $"Packet received from {clientId}", ConsoleColor.Cyan);
+        try
+        {
+            Network.MarkIncomingPacket();
+
+            if (Bridge is not null)
+            {
+                await Bridge.SendPostAsync(string.Empty, JsonSerializer.Deserialize<JsonElement>(payload));
+                ConsoleUi.Log("NETWORK", $"Packet forwarded to mod from {clientId}", ConsoleColor.Cyan);
+            }
+            else
+            {
+                ConsoleUi.Log("NETWORK", "Bridge is not initialized", ConsoleColor.Red);
+            }
+        }
+        catch (Exception ex)
+        {
+            ConsoleUi.Log("NETWORK", ex.Message, ConsoleColor.Red);
+        }
     }
 
-    private static void SendPong()
+    private static async Task SendPongAsync()
     {
-        RegistryMonitor.SendData(new Dictionary<string, string>
+        if (Bridge is null)
+        {
+            return;
+        }
+
+        await Bridge.SendPostAsync(string.Empty, new Dictionary<string, string>
         {
             ["type"] = "PONG",
             ["message"] = "Client is alive"
         });
+
+        ConsoleUi.Log("MOD", "PONG sent", ConsoleColor.Green);
     }
 
-    private static bool IsPacketType(string payload, string expectedType)
+    private static bool IsPacketType(JsonElement payload, string expectedType)
     {
         try
         {
-            using var document = JsonDocument.Parse(payload);
-
-            return TryReadPacketType(document.RootElement, out var packetType)
+            return TryReadPacketType(payload, out var packetType)
                    && string.Equals(packetType, expectedType, StringComparison.OrdinalIgnoreCase);
         }
         catch
@@ -116,13 +148,15 @@ internal static class Program
 
         if (element.ValueKind == JsonValueKind.Object && element.TryGetProperty("data", out var data))
         {
-            if (TryReadStringProperty(data, "type", out packetType) || TryReadStringProperty(data, "Type", out packetType))
+            if (TryReadStringProperty(data, "type", out packetType) ||
+                TryReadStringProperty(data, "Type", out packetType))
             {
                 return true;
             }
         }
 
-        if (TryReadStringProperty(element, "type", out packetType) || TryReadStringProperty(element, "Type", out packetType))
+        if (TryReadStringProperty(element, "type", out packetType) ||
+            TryReadStringProperty(element, "Type", out packetType))
         {
             return true;
         }

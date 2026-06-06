@@ -1,106 +1,144 @@
 local NetworkManager = {}
 
-NetworkManager.PrefsKey = "Handshake"
-NetworkManager.EmptyValue = "<NULLARGUMENTEXTEPTION>"
 NetworkManager.Listeners = {}
-NetworkManager.LastPrefs = nil
 
-function NetworkManager.AddOnGetListener(func)
-    if basicModule.type(func) ~= "function" then
-        Logger.Log("Network listener must be a function", LogTypes.Warning)
+NetworkManager.Endpoint = "custom"
+NetworkManager.LocalBridgeUrl = "http://127.0.0.1:8766/"
+NetworkManager.FromId = tostring(Time.GetRealTimeMs())
+
+local handlersRegistered = false
+
+local function RegisterWebHandlers()
+    if handlersRegistered then
         return
     end
 
-    for _, listener in tableIterators.ipairs(NetworkManager.Listeners) do
-        if listener == func then
+    local function OnPostHandler(path, body)
+        if path ~= NetworkManager.Endpoint then
+            return
+        end
+
+        if not body or body == "" then
+            return
+        end
+
+        local ok, packet = pcall(json.parse, body)
+        if not ok or type(packet) ~= "table" then
+            Debug.Log("[NetworkManager] Failed to parse incoming POST body")
+            return
+        end
+
+        if packet.from == NetworkManager.FromId then
+            return
+        end
+
+        if type(packet.data) ~= "table" then
+            return
+        end
+
+        for _, listener in ipairs(NetworkManager.Listeners) do
+            local listenerOk, err = pcall(listener, packet.data, packet.time or 0)
+            if not listenerOk then
+                Debug.Log("[NetworkManager] Listener error: " .. tostring(err))
+            end
+        end
+    end
+
+    local function OnGetHandler(path)
+        if path == "ping" then
+            Debug.Log("[NetworkManager] ping received")
+        end
+    end
+
+    WebManager.OnPost:AddListener(OnPostHandler)
+    WebManager.OnGet:AddListener(OnGetHandler)
+
+    handlersRegistered = true
+    Debug.Log("[NetworkManager] Web handlers registered")
+end
+
+function NetworkManager.AddListener(callback)
+    if type(callback) ~= "function" then
+        Debug.Log("[NetworkManager] Callback must be a function")
+        return
+    end
+
+    for _, existing in ipairs(NetworkManager.Listeners) do
+        if existing == callback then
             return
         end
     end
 
-    table.insert(NetworkManager.Listeners, func)
+    table.insert(NetworkManager.Listeners, callback)
+    Debug.Log("[NetworkManager] Listener added, total: " .. #NetworkManager.Listeners)
 end
 
-function NetworkManager.RemoveOnGetListener(func)
+function NetworkManager.RemoveListener(callback)
     for i = #NetworkManager.Listeners, 1, -1 do
-        if NetworkManager.Listeners[i] == func then
+        if NetworkManager.Listeners[i] == callback then
             table.remove(NetworkManager.Listeners, i)
         end
     end
 end
 
-function NetworkManager.Update()
-    local currentPrefs = File.GetPlayerPrefsStr(NetworkManager.PrefsKey, NetworkManager.EmptyValue)
-
-    if currentPrefs == NetworkManager.EmptyValue or currentPrefs == NetworkManager.LastPrefs then
-        return
-    end
-
-    NetworkManager.LastPrefs = currentPrefs
-
-    local status, packet = errorHandling.pcall(json.parse, currentPrefs)
-
-    if not status or basicModule.type(packet) ~= "table" then
-        Logger.Log("Network packet json parse failed. Message: " .. currentPrefs, LogTypes.Warning)
-        return
-    end
-
-    if packet.from == "MOD" then
-        return
-    end
-
-    if basicModule.type(packet.data) ~= "table" then
-        Logger.Log("Network packet data is empty", LogTypes.Warning)
-        return
-    end
-
-    NetworkManager.OnGet(NetworkManager.DecodeData(packet.data), packet.Time)
-end
-
-function NetworkManager.OnGet(data, time)
-    for i = 1, #NetworkManager.Listeners do
-        local listener = NetworkManager.Listeners[i]
-        local ok, err = errorHandling.pcall(listener, data, time)
-
-        if not ok then
-            Logger.Log("Network listener failed: " .. basicModule.tostring(err), LogTypes.Error)
-        end
-    end
-end
-
-function NetworkManager.Send(data)
-    if basicModule.type(data) ~= "table" then
-        Logger.Log("NetworkManager.Send expects table data", LogTypes.Warning)
+function NetworkManager.Send(data, callback)
+    if type(data) ~= "table" then
+        Debug.Log("[NetworkManager] Send expects a table")
         return
     end
 
     local packet = {
-        Type = "POST",
-        Time = basicModule.tostring(Time.GetRealTimeMs()),
-        data = NetworkManager.EncodeData(data),
-        from = "MOD"
+        from = NetworkManager.FromId,
+        time = tostring(Time.GetRealTimeMs()),
+        data = data
     }
 
-    File.SetPlayerPrefsStr(NetworkManager.PrefsKey, json.serialize(packet))
-end
+    local jsonStr = json.serialize(packet)
 
-function NetworkManager.EncodeData(data)
-    local encoded = {}
+    if callback then
+        local successHandler
+        local errorHandler
 
-    for key, value in tableIterators.pairs(data) do
-        encoded[basicModule.tostring(key)] = StringResolvers.TransferTypeToString(value)
+        successHandler = function(path, response)
+            if path ~= NetworkManager.Endpoint then
+                return
+            end
+
+            callback(true, response)
+            WebManager.OnRequestSuccess:RemoveListener(successHandler)
+            WebManager.OnRequestError:RemoveListener(errorHandler)
+        end
+
+        errorHandler = function(err)
+            callback(false, err)
+            WebManager.OnRequestSuccess:RemoveListener(successHandler)
+            WebManager.OnRequestError:RemoveListener(errorHandler)
+        end
+
+        WebManager.OnRequestSuccess:AddListener(successHandler)
+        WebManager.OnRequestError:AddListener(errorHandler)
     end
 
-    return encoded
+    WebManager.SendPost(
+        NetworkManager.Endpoint,
+        jsonStr,
+        "application/json",
+        NetworkManager.LocalBridgeUrl,
+        5000
+    )
+
+    Debug.Log("[NetworkManager] Data sent: " .. jsonStr)
 end
 
-function NetworkManager.DecodeData(data)
-    local decoded = {}
+function NetworkManager.Init()
+    RegisterWebHandlers()
+    Debug.Log("[NetworkManager] Initialized with localWeb transport")
+end
 
-    for key, value in tableIterators.pairs(data) do
-        decoded[key] = StringResolvers.TransferStringToType(value)
-    end
-
-    return decoded
+function NetworkManager.Shutdown()
+    handlersRegistered = false
+    NetworkManager.Listeners = {}
+    Debug.Log("[NetworkManager] Shutdown")
 end
 
 return NetworkManager

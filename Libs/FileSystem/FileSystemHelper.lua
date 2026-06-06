@@ -25,7 +25,8 @@ function FileSystemHelper.FindFilesWithName(targetName, relPath)
             if fileName then
                 local fullPath = (path == "" or path == nil) and fileName or (path .. "/" .. fileName)
                 
-                if string.find(fullPath, targetName, 1, true) then
+                local escapedTarget = string.gsub(targetName, "([^%w])", "%%%1")
+                if string.find(fullPath, escapedTarget .. "$") then
                     table.insert(foundFiles, fullPath)
                 end
             end

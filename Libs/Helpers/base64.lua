@@ -157,7 +157,7 @@ end
 
 function base64.decode(b64, decoder)
     decoder = decoder or DEFAULT_DECODER
-    b64 = string.gsub(b64, '[^%w%+%/%=]', '')
+    b64 = string.gsub(b64, '[^%w%+%-%=]', '')
 
     local bytes = {}
     local n = #b64

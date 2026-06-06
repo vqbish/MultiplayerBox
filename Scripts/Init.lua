@@ -33,23 +33,40 @@ function FindFilesWithName(targetName, relPath)
 end
 local loggerPrefix = File.GetModName()
 Debug.Log(loggerPrefix .. " Init")
-local found = FindFilesWithName("Includes.lua", File.GetModName() .. "/Scripts")
+local function GetLastFolderName(path)
+    if not path or path == "" then return "" end
+    path = string.gsub(path, "[/\\]+$", "")
+    local lastFolderName = string.match(path, "[^/\\]+$")
+    return lastFolderName or ""
+end
+local function GetModFolderName()
+    return GetLastFolderName(File.GetModRoot())
+end
+local found = FindFilesWithName("Includes.lua", GetModFolderName() .. "/Scripts")
 if #found <= 0 then
-    found = FindFilesWithName("Includes.lua", "MultiplayerBox-main/Scripts")
-    if #found <= 0 then
-        Debug.Log("Critical error in mod loading: includes not found")
-        return
-    end
+    Debug.Log("Critical error in mod loading. includes not found")
 end
 Debug.Log("Found Includes.lua")
 Includes = File.DoFile(found[#found])
-
+MainEntry = File.DoFile(FindFilesWithName("MainEntry.lua", GetModFolderName() .. "/Scripts")[1])
+function Awake() MainEntry.Awake() end
+function OnUnload() MainEntry.OnUnload() end
+function FixedUpdate() MainEntry.FixedUpdate() end
+function OnGUI() MainEntry.OnGUI() end
+function OnGUIOver() MainEntry.OnGUIOver() end
+function Start()
+    MainEntry.Start()
+end
 function Update()
+    MainEntry.Update()
+    GBDumper.Update()
     TickManager.Update()
-    NetworkManager.Update()
+end
+function LateUpdate()
+    MainEntry.LateUpdate()
 end
 
-
 function OnChatMessage(message, sender)
+    MainEntry.OnChatMessage(message, sender)
     ChatMaster.OnChatMessage(message, sender)
 end

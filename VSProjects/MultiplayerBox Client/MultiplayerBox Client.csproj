@@ -10,8 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="GoreBoxRegistryLinker">
-      <HintPath>..\GoreBoxRegistryLinker\bin\Debug\net10.0\GoreBoxRegistryLinker.dll</HintPath>
+    <Reference Include="ModInfoTransfer">
+      <HintPath>..\ModInfoTransfer\bin\Debug\net10.0\ModInfoTransfer.dll</HintPath>
     </Reference>
     <Reference Include="NetLiblary">
       <HintPath>..\NetLiblary\bin\Debug\net10.0\NetLiblary.dll</HintPath>

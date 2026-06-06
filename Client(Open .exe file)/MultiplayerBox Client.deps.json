@@ -8,16 +8,16 @@
     ".NETCoreApp,Version=v10.0": {
       "MultiplayerBox Client/1.0.0": {
         "dependencies": {
-          "GoreBoxRegistryLinker": "1.0.0.0",
+          "ModInfoTransfer": "1.0.0.0",
           "NetLiblary": "1.0.0.0"
         },
         "runtime": {
           "MultiplayerBox Client.dll": {}
         }
       },
-      "GoreBoxRegistryLinker/1.0.0.0": {
+      "ModInfoTransfer/1.0.0.0": {
         "runtime": {
-          "GoreBoxRegistryLinker.dll": {
+          "ModInfoTransfer.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -39,7 +39,7 @@
       "serviceable": false,
       "sha512": ""
     },
-    "GoreBoxRegistryLinker/1.0.0.0": {
+    "ModInfoTransfer/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""
